@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1 — Introduction to Software Engineering</title>
+  <style>
+
+    /* ─── Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:    #1F4E79;
+      --blue-med:     #2E75B6;
+      --blue-light:   #D6E4F0;
+      --teal:         #006064;
+      --teal-light:   #E0F7FA;
+      --amber:        #7B4F00;
+      --amber-light:  #FFF8E1;
+      --green-dark:   #1B5E20;
+      --green-light:  #E8F5E9;
+      --gray-light:   #F5F5F5;
+      --text:         #1A1A2E;
+      --text-muted:   #555;
+      --border:       #DDD;
+      --page-bg:      #FFFFFF;
+      --font:         'Segoe UI', Arial, sans-serif;
+      --font-mono:    'Courier New', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--page-bg);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 48px 80px;
+    }
+
+    /* ─── Typography ───────────────────────────────────────────── */
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      border-bottom: 3px solid var(--blue-med);
+      padding-bottom: 8px;
+      margin: 48px 0 18px;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--blue-med);
+      margin: 36px 0 12px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 24px 0 8px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    a { color: var(--blue-med); }
+
+    strong { font-weight: 700; }
+    em     { font-style: italic; }
+
+    /* ─── Lists ────────────────────────────────────────────────── */
+    ul, ol {
+      margin: 8px 0 16px 24px;
+    }
+    li { margin-bottom: 6px; }
+
+    /* ─── Tables ───────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.93em;
+    }
+    th {
+      background: var(--blue-dark);
+      color: #FFF;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* ─── Callout boxes ────────────────────────────────────────── */
+    .box {
+      border-left: 5px solid var(--teal);
+      background: var(--teal-light);
+      border-radius: 0 6px 6px 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+    }
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--teal);
+    }
+
+    .box-ai {
+      border-left-color: var(--amber);
+      background: var(--amber-light);
+    }
+    .box-ai .box-title { color: var(--amber); }
+
+    .box-warn {
+      border-left-color: #C62828;
+      background: #FFEBEE;
+    }
+    .box-warn .box-title { color: #C62828; }
+
+    .box-note {
+      border-left-color: var(--blue-med);
+      background: var(--blue-light);
+    }
+    .box-note .box-title { color: var(--blue-dark); }
+
+    .box-green {
+      border-left-color: var(--green-dark);
+      background: var(--green-light);
+    }
+    .box-green .box-title { color: var(--green-dark); }
+
+    /* ─── Cover ────────────────────────────────────────────────── */
+    .cover {
+      text-align: center;
+      padding: 48px 0 32px;
+      border-bottom: 2px solid var(--blue-light);
+      margin-bottom: 12px;
+    }
+    .cover-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--blue-dark);
+      line-height: 1.2;
+    }
+    .cover-subtitle {
+      font-size: 1.80rem;
+      color: var(--blue-med);
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .cover-meta-item {
+      background: var(--blue-dark);
+      color: #FFF;
+      border-radius: 8px;
+      padding: 10px 24px;
+      min-width: 160px;
+      text-align: center;
+    }
+    .cover-meta-item .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    .cover-meta-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .cover-meta-item a { color: #fff; text-decoration: none; }
+
+    /* ─── TOC ──────────────────────────────────────────────────── */
+    .toc {
+      background: var(--gray-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 28px;
+      margin: 32px 0 40px;
+    }
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    .toc ol { margin: 0 0 0 18px; }
+    .toc li { margin-bottom: 4px; font-size: 0.95em; }
+    .toc a { text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ─── Section divider ──────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* ─── Image placeholder ────────────────────────────────────── */
+    .img-placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      background: var(--gray-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      margin: 16px 0 20px;
+      color: var(--text-muted);
+      text-align: center;
+      gap: 8px;
+    }
+    .img-placeholder .img-icon { font-size: 2rem; }
+    .img-placeholder .img-label { font-size: 0.85rem; font-weight: 600; }
+    .img-placeholder .img-hint  { font-size: 0.78rem; }
+
+    .responsive-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 16px 0 20px;
+    }
+
+    /* ─── Quote card (Brooks style) ────────────────────────────── */
+    .quote-card {
+      display: flex;
+      gap: 0;
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0 32px;
+    }
+    .quote-img-col {
+      flex: 0 0 200px;
+      background: var(--gray-light);
+      overflow: hidden;
+    }
+    .quote-img-col img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .quote-col {
+      flex: 1;
+      background: var(--page-bg);
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 3px solid var(--blue-dark);
+    }
+    .quote-mark {
+      font-size: 56px;
+      line-height: 1;
+      color: var(--blue-med);
+      font-family: Georgia, serif;
+      margin-bottom: -8px;
+    }
+    .quote-text {
+      font-size: 15.5px;
+      line-height: 1.75;
+      font-style: italic;
+      color: var(--text);
+      font-family: Georgia, serif;
+      margin: 0 0 20px;
+    }
+    .quote-text strong { font-style: normal; color: var(--blue-dark); }
+    .quote-meta { border-top: 1px solid var(--border); padding-top: 14px; }
+    .quote-name { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .quote-role { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+    .quote-source {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11.5px; text-decoration: none;
+      border: 1px solid var(--blue-light); background: var(--blue-light);
+      border-radius: 4px; padding: 3px 9px; color: var(--blue-dark);
+      font-family: var(--font);
+    }
+    .quote-source:hover { background: var(--blue-med); color: #fff; }
+
+    /* ─── Numbered step blocks ─────────────────────────────────── */
+    .step-block {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 0 0 16px;
+    }
+    .step-header {
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-num {
+      background: #fff;
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-title { color: #fff; font-weight: 600; }
+    .step-body { padding: 14px 18px; }
+
+    /* ─── Agile manifesto block ────────────────────────────────── */
+    .manifesto {
+      border: 1px solid var(--blue-med);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0 28px;
+    }
+    .manifesto-header {
+      background: var(--blue-dark);
+      color: #fff;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+    }
+    .manifesto-body {
+      background: var(--blue-light);
+      padding: 18px 22px;
+    }
+    .manifesto-body p {
+      font-style: italic;
+      font-family: Georgia, serif;
+      font-size: 14.5px;
+      line-height: 1.8;
+      color: var(--text);
+      margin: 0 0 12px;
+    }
+    .manifesto-values {
+      list-style: none;
+      margin: 0 0 12px 0;
+      padding: 0;
+    }
+    .manifesto-values li {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      font-size: 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .manifesto-values li:last-child { border-bottom: none; }
+    .manifesto-values .mv-left  { font-weight: 700; color: var(--blue-dark); }
+    .manifesto-values .mv-over  { font-size: 0.82em; color: var(--text-muted); margin: 0 4px; }
+    .manifesto-values .mv-right { color: var(--text-muted); font-style: italic; }
+    .manifesto-note {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ─── AI callout bar ───────────────────────────────────────── */
+    .ai-bar {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 24px 0 28px;
+    }
+    .ai-bar-header {
+      background: var(--amber);
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-bar-header span {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .ai-bar-body {
+      background: var(--amber-light);
+      padding: 16px 22px;
+    }
+
+    /* ─── Pill row ─────────────────────────────────────────────── */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+    .pill-card {
+      border-radius: 8px;
+      padding: 12px 18px;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+    }
+    .pill-letter { font-size: 1.4rem; font-weight: 800; }
+    .pill-label  { font-size: 0.85rem; font-weight: 600; margin-top: 2px; }
+
+    /* ─── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { max-width: 100%; padding: 20px 30px; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      .box, table, .step-block { page-break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       COVER
+       ═══════════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-title">Module 1: Introduction</div>
+    <div class="cover-subtitle">Introduction to Software Engineering</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Course</div>
+        <div class="value">CSE 3225 Software Engineering</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Lecture</div>
+        <div class="value">Lecture-1</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Topic</div>
+        <div class="value">Introduction</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       TABLE OF CONTENTS
+       ═══════════════════════════════════════════════════════ -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">The Ariane 5 Explosion</a></li>
+      <li><a href="#s2">What is Software Engineering?</a></li>
+      <li><a href="#s3">Historical Background</a></li>
+      <li><a href="#s4">Essential and Accidental Difficulties</a></li>
+      <li><a href="#s5">Software Development Process (SDLC)</a></li>
+      <li><a href="#s6">Plan-and-Document: The Waterfall Model</a></li>
+      <li><a href="#s7">Limitations of the Plan-and-Document Approach</a></li>
+      <li><a href="#s8">The Agile Software Development Methodology</a></li>
+      <li><a href="#s9">Comparison Summary</a></li>
+      <li><a href="#s10">Conclusion</a></li>
+      <li><a href="#s11">Software Engineering in the Age of AI</a></li>
+    </ol>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — ARIANE 5
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s1">1. The Ariane 5 Explosion</h1>
+
+  <p>Welcome to the world of software engineering! As you will soon find out, becoming a capable software engineer involves much more than knowing how to write code or algorithms.</p>
+
+  <!-- Image placeholder — replace src with your actual image -->
+  <div class="img-placeholder">
+    <div class="img-icon">&#128640;</div>
+    <div class="img-label">Ariane 5 Rocket / Flight 501 Explosion (June 4, 1996)</div>
+    
+    <img src="ariane5.jpg" alt="Ariane 5 Rocket Explosion" class="responsive-image" />
+  </div>
+
+  <p>Ariane 5 rocket, a launcher developed by the European Space Agency, exploded shortly after take-off (Flight 501) on June 4, 1996, due to a catastrophic software error in the inertial reference system, which was reused from the earlier Ariane 4 rocket.</p>
+
+  <p>Key reasons for the failure included:</p>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">1</span>
+      <span class="step-title">Integer Overflow</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">The software attempted to convert a 64-bit floating-point number (representing horizontal velocity) into a 16-bit signed integer. Because Ariane 5 was faster than Ariane 4, this value exceeded the maximum limit of 32,767, causing an overflow error.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">2</span>
+      <span class="step-title">Reused Software Design</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">The inertial reference system software was designed for the Ariane 4, which had a different trajectory and velocity. The software was not adapted for the higher performance of the Ariane 5.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">3</span>
+      <span class="step-title">Inappropriate Error Handling</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">When the error occurred, the primary and backup computers shut down, sending incorrect signals to the boosters. This caused the rocket to veer off course and break apart, leading to self-destruction.</p>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — WHAT IS SOFTWARE ENGINEERING
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s2">2. What is Software Engineering?</h1>
+
+  <p>In today's world, software powers virtually everything. Organizations of all types and sizes, including businesses and governmental entities, depend on software systems to deliver their services effectively.</p>
+
+  <p>Given the vital role software plays in our society, it's not surprising that a field of computer science has emerged to develop systematic approaches for constructing software systems, particularly large and complex projects. This field is known as <strong>software engineering</strong>.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#128218; Definition</div>
+    <p style="margin:0;">Software engineering can be defined as the <strong>systematic, disciplined, and quantifiable approaches</strong> to developing, operating, maintaining, and evolving software systems. As mentioned, this field is central to computer science and involves applying engineering principles to software construction.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — HISTORICAL BACKGROUND
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s3">3. Historical Background</h1>
+
+  <p>Historically, software engineering as a field emerged in the late 1960s. In October 1968, around 50 eminent computer scientists gathered for a week in Garmisch, Germany, for a NATO-sponsored conference. The purpose of this meeting was to discuss a crucial problem of computer usage, the so-called software. The conference produced a 130-page report advocating for software development based on practical and theoretical principles, drawing inspiration from other branches of engineering.</p>
+
+  <!-- Image placeholder -->
+  <div class="img-placeholder">
+    <div class="img-icon">&#127979;</div>
+    <div class="img-label">1968 NATO Software Engineering Conference, Garmisch, Germany</div>
+    <img src="nato_conference_1968.jpg"/>
+  </div>
+
+  <p>However, it was found out that software development is much more difficult than other engineering endeavors. In 1987, Frederick Brooks, wrote an essay titled <a href="https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf" target="_blank">"No Silver Bullet: Essence and Accident in Software Engineering"</a>. According to Brooks, there are two types of difficulties in software engineering: <strong>essential difficulties</strong> and <strong>accidental difficulties</strong>. Essential difficulties are intrinsic to the field and are unlikely to be solved by novel technologies.</p>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 4 — ESSENTIAL AND ACCIDENTAL DIFFICULTIES
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s4">4. Essential and Accidental Difficulties</h1>
+
+  
+
+  <h2>Essential Difficulties</h2>
+
+  <p>Brooks described the following essential difficulties:</p>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">1</span>
+      <span class="step-title">Complexity</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Of all human-made constructions, software stands out as one of the most intricate and complex. Even traditional engineering constructs, such as satellites, nuclear power plants, or rockets, are increasingly relying on software.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">2</span>
+      <span class="step-title">Conformity</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Software must adapt continuously to its ever-changing environment. For instance, changes in tax legislation require prompt adaptations in related software. This level of adaptability is not required in other fields like Physics, where natural laws do not change due to human decisions.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">3</span>
+      <span class="step-title">Changeability</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">There is constant pressure for software to evolve and incorporate new features. In fact, the more successful a software product is, the more likely it is to attract requests for modifications.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">4</span>
+      <span class="step-title">Invisibility</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">It is inherently challenging to visualize the structure and complexity of software due to its abstract nature.</p>
+    </div>
+  </div>
+
+  <h2>Accidental Difficulties</h2>
+
+  <p>Software development also faces accidental difficulties, but these can be addressed by developers given adequate training and access to existing technologies and resources. Examples of such difficulties include an IDE that frequently crashes, a compiler with cryptic error messages, a framework lacking documentation, or a web application with a confusing interface.</p>
+
+  <h2>Real World Example</h2>
+
+  <div class="box box-green">
+    <div class="box-title">&#127758; The Scale of Real Software</div>
+    <p style="margin:0;">The complexity involved in building software systems can be illustrated by considering their size. For instance, the open-source projects supported by the Linux Foundation have over <strong>1.7 billion lines of code</strong> and involve <strong>65,000 active developers</strong>, according to the foundation's 2023 report. Specifically, the Linux kernel, which is the core component of the operating system, has more than <strong>30 million lines of code</strong>. Companies such as Google have also reported that their systems comprise <strong>billions of lines of code</strong>.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 5 — SDLC
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s5">5. Software Development Process (SDLC)</h1>
+
+  <h2>What is SDLC?</h2>
+
+  <p>The <strong>Software Development Life Cycle (SDLC)</strong> is a structured framework that defines the stages involved in developing software systems, from initial idea to deployment and maintenance. It provides a systematic approach to planning, building, testing, and evolving software products.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#9989; An SDLC helps ensure:</div>
+    <ul style="margin:6px 0 0 20px;">
+      <li>Predictability in development</li>
+      <li>Better quality control</li>
+      <li>Reduced development risks</li>
+      <li>Improved communication among stakeholders</li>
+    </ul>
+  </div>
+
+  <p>Different SDLC models exist, but they generally represent different ways of organizing the software development process.</p>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 6 — WATERFALL MODEL
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s6">6. Plan-and-Document: The Waterfall Model</h1>
+
+  <p>The <strong>Plan-and-Document</strong> software development process emphasizes that documentation should be produced and maintained at every stage of development. One of the earliest formal descriptions of this structured process was introduced by Dr. Winston Royce (1970), an American computer scientist, which later became known as the <strong>Waterfall Model</strong>.</p>
+
+  <p>Waterfall model follows the following sequence of phases:</p>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">1</span>
+      <span class="step-title">Requirements analysis and specification</span>
+    </div>
+    <div class="step-body" style="padding:10px 18px;"><p style="margin:0;color:var(--text-muted);font-size:0.9em;">Define what the system must do.</p></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-med);">
+      <span class="step-num" style="color:var(--blue-med);">2</span>
+      <span class="step-title">System and Architectural design</span>
+    </div>
+    <div class="step-body" style="padding:10px 18px;"><p style="margin:0;color:var(--text-muted);font-size:0.9em;">Design the overall structure of the system.</p></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--teal);">
+      <span class="step-num" style="color:var(--teal);">3</span>
+      <span class="step-title">Implementation and Integration</span>
+    </div>
+    <div class="step-body" style="padding:10px 18px;"><p style="margin:0;color:var(--text-muted);font-size:0.9em;">Write and assemble the code.</p></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--green-dark);">
+      <span class="step-num" style="color:var(--green-dark);">4</span>
+      <span class="step-title">Verification and Testing</span>
+    </div>
+    <div class="step-body" style="padding:10px 18px;"><p style="margin:0;color:var(--text-muted);font-size:0.9em;">Verify that the system meets its requirements.</p></div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#37474F;">
+      <span class="step-num" style="color:#37474F;">5</span>
+      <span class="step-title">Operation and Maintenance</span>
+    </div>
+    <div class="step-body" style="padding:10px 18px;"><p style="margin:0;color:var(--text-muted);font-size:0.9em;">Deploy and maintain the system over time.</p></div>
+  </div>
+
+  <p>The core philosophy of this process is to complete a phase before going on to the next one, thereby removing as many errors as early as possible. Getting the early phases right could also prevent unnecessary work downstream.</p>
+
+  <p>As this process could take years, the extensive documentation helps to ensure that important information is not lost if a person leaves the project and that new people can get up to speed quickly when they join the project.</p>
+
+  <p>Because it flows from the top down to completion, this process is called the <strong>Waterfall software development process</strong> or <strong>Waterfall software development lifecycle (SDLC)</strong>.</p>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 7 — LIMITATIONS OF WATERFALL
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s7">7. Limitations of the Plan-and-Document Approach</h1>
+
+  <p>While Plan-and-Document processes introduced discipline to software development, they could not prevent some infamous, disastrous failures. Programmers have heard about the Ariane 5 explosion, the Therac-25 radiation tragedies, the Mars Climate Orbiter loss, and the failed FBI Virtual Case File so often that these cautionary tales have become industry clichés.</p>
+
+  <p>Surveys indicate that only a small fraction of projects are completed successfully on time and within budget, while many are delayed, over budget, or cancelled entirely. Figure below summarizes four surveys of software projects. With just 10% to 16% on time and on budget, more projects were cancelled or abandoned than met their mark. A closer look at the 13% of projects in survey (b) that were successful is even more sobering, as fewer than 1% of new development projects met their schedules and budgets. Although the first three surveys are 10 to 25 years old, survey d) is from 2013. Nearly 40% of these large projects were cancelled or abandoned, and 50% were late, over budget, and missing functionality.</p>
+
+  <!-- Image placeholder for the survey pie charts -->
+  <div class="img-placeholder">
+    <div class="img-icon">&#128202;</div>
+    <div class="img-label">Software Project Surveys (Johnson 1995, Taylor 2000, Jones 2004, Johnson 2013)</div>
+    <img src="software_project_surveys.png"/>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">&#9888;&#65039; Key Finding</div>
+    <p style="margin:0;">These findings suggest that purely predictive, rigid planning approaches often <strong>struggle in real-world environments where requirements evolve continuously</strong>.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 8 — AGILE
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s8">8. The Agile Software Development Methodology</h1>
+
+  <p>The limitations of traditional models led to the emergence of alternative approaches. A major turning point in software engineering occurred in <strong>February 2001</strong>, when a group of software developers gathered at a ski resort in Snowbird, Utah (USA) and formulated the <strong>Agile Manifesto</strong>, marking a shift toward lightweight and adaptive development processes. This movement can be seen as a "reformation" in software engineering thinking.</p>
+
+  <!-- Agile Manifesto block -->
+  <div class="manifesto">
+    <div class="manifesto-header">&#128196; The Agile Manifesto</div>
+    <div class="manifesto-body">
+      <p>"We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value:</p>
+      <ul class="manifesto-values">
+        <li>
+          <span class="mv-left">Individuals and interactions</span>
+          <span class="mv-over">over</span>
+          <span class="mv-right">processes and tools</span>
+        </li>
+        <li>
+          <span class="mv-left">Working software</span>
+          <span class="mv-over">over</span>
+          <span class="mv-right">comprehensive documentation</span>
+        </li>
+        <li>
+          <span class="mv-left">Customer collaboration</span>
+          <span class="mv-over">over</span>
+          <span class="mv-right">contract negotiation</span>
+        </li>
+        <li>
+          <span class="mv-left">Responding to change</span>
+          <span class="mv-over">over</span>
+          <span class="mv-right">following a plan</span>
+        </li>
+      </ul>
+      <p class="manifesto-note">That is, while there is value in the items on the right, we value the items on the left more."</p>
+    </div>
+  </div>
+
+  <h2>Core Idea of Agile</h2>
+
+  <p>Unlike Waterfall, Agile assumes that:</p>
+  <ul>
+    <li>Requirements will change over time</li>
+    <li>Software development is iterative and exploratory</li>
+    <li>Feedback is essential throughout the process</li>
+  </ul>
+
+  <p>Instead of completing the system in one linear pass, Agile promotes:</p>
+  <ul>
+    <li>Continuous refinement of a working system</li>
+    <li>Frequent delivery of small increments</li>
+    <li>Close collaboration with customers</li>
+  </ul>
+
+  <h2>Key Practices in Agile</h2>
+
+  <p>Agile introduces several important engineering practices:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:35%;">Practice</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Iterative Development</strong></td>
+        <td>Build software in small cycles (iterations)</td>
+      </tr>
+      <tr>
+        <td><strong>User Stories</strong></td>
+        <td>Define requirements from the user's perspective</td>
+      </tr>
+      <tr>
+        <td><strong>Test-Driven Development (TDD)</strong></td>
+        <td>Write tests before implementation</td>
+      </tr>
+      <tr>
+        <td><strong>Continuous Feedback</strong></td>
+        <td>Regular stakeholder involvement</td>
+      </tr>
+      <tr>
+        <td><strong>Velocity Tracking</strong></td>
+        <td>Measure team progress over time</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Software Release Philosophy</h2>
+
+  <p>Agile encourages rapid and continuous delivery:</p>
+  <ul>
+    <li>New software versions may be released every <strong>1–2 weeks</strong></li>
+    <li>Some systems even deploy updates daily</li>
+    <li>Releases are no longer rare, large events as in Waterfall</li>
+  </ul>
+
+  <p>In contrast:</p>
+  <ul>
+    <li>Waterfall projects typically release new version every <strong>6–18 months</strong></li>
+  </ul>
+
+  <h2>Agile Variants</h2>
+
+  <p>Several frameworks fall under the Agile umbrella (Fowler, 2005):</p>
+
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 20px;">
+    <div style="flex:1;min-width:140px;border:1px solid var(--blue-light);border-radius:8px;
+                padding:14px 16px;background:var(--blue-light);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:4px;">&#9889;</div>
+      <div style="font-weight:700;color:var(--blue-dark);">Extreme Programming (XP)</div>
+    </div>
+    <div style="flex:1;min-width:140px;border:1px solid var(--teal-light);border-radius:8px;
+                padding:14px 16px;background:var(--teal-light);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:4px;">&#127939;</div>
+      <div style="font-weight:700;color:var(--teal);">Scrum</div>
+    </div>
+    <div style="flex:1;min-width:140px;border:1px solid var(--amber-light);border-radius:8px;
+                padding:14px 16px;background:var(--amber-light);text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:4px;">&#128203;</div>
+      <div style="font-weight:700;color:var(--amber);">Kanban</div>
+    </div>
+  </div>
+
+  <p>Each framework adapts Agile principles to different team structures and project needs.</p>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 9 — COMPARISON SUMMARY
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s9">9. Comparison Summary</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:28%;">Aspect</th>
+        <th>Waterfall (Plan-and-Document)</th>
+        <th>Agile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Development Style</strong></td>
+        <td>Sequential</td>
+        <td>Iterative</td>
+      </tr>
+      <tr>
+        <td><strong>Requirements</strong></td>
+        <td>Fixed early</td>
+        <td>Evolving</td>
+      </tr>
+      <tr>
+        <td><strong>Documentation</strong></td>
+        <td>Extensive</td>
+        <td>Lightweight</td>
+      </tr>
+      <tr>
+        <td><strong>Delivery</strong></td>
+        <td>One final product</td>
+        <td>Continuous delivery</td>
+      </tr>
+      <tr>
+        <td><strong>Customer Role</strong></td>
+        <td>Limited</td>
+        <td>Continuous involvement</td>
+      </tr>
+      <tr>
+        <td><strong>Best suited for</strong></td>
+        <td>Stable, well-defined systems</td>
+        <td>Dynamic, evolving systems</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 10 — CONCLUSION
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s10">10. Conclusion</h1>
+
+  <p>The Waterfall model provides structure, predictability, and strong documentation practices, making it suitable for well-defined and safety-critical systems. However, it struggles in environments where requirements are uncertain or change frequently.</p>
+
+  <p>Agile methodologies address these limitations by embracing change, promoting iterative development, and emphasizing collaboration and working software over documentation.</p>
+
+  <p>Modern software engineering often combines elements of both approaches depending on project needs.</p>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 11 — SOFTWARE ENGINEERING IN THE AGE OF AI
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s11">11. Software Engineering in the Age of AI</h1>
+
+  <div class="ai-bar">
+    <div class="ai-bar-header">
+      <span>&#129302; AI is Reshaping Software Engineering</span>
+    </div>
+    <div class="ai-bar-body">
+      <p style="margin:0;">AI is no longer a "tool," it's becoming a <strong>co-developer, tester, and even architect</strong>. So our course should evolve from:</p>
+      <p style="margin:10px 0 0;font-style:italic;color:var(--amber);">
+        "How to build software systems" &rarr; "How to build, manage, and verify AI-assisted software systems"
+      </p>
+    </div>
+  </div>
+
+  <h2>What is Happening</h2>
+
+  <ul>
+    <li>AI code assistants (Claude Code) are becoming more and more powerful, accurate and effective. AI now generates a significant portion—sometimes over 70 - 90% — of new code in many organizations, transforming the developer role from a creator of syntax into a <strong>reviewer and architect</strong>.</li>
+    <li>AI isn't replacing all software engineers. It's replacing a specific kind of work. The low-level, average, routine execution work is getting replaced with AI much faster than anyone could imagine. As a result, it's forcing us to think of what it means to be a software engineer in today's market.</li>
+  </ul>
+
+  <h2>Key Things to Do</h2>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">1</span>
+      <span class="step-title">From "Coder" to "Reviewer"</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Emphasize code review, reading, and debugging skills, as AI can generate code faster than humans, but struggles with complex, multi-system diagnostics.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">2</span>
+      <span class="step-title">Focus on Fundamentals</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Deep knowledge of algorithms, data structures, and architecture is essential to guide AI and correct its errors.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">3</span>
+      <span class="step-title">System-Level Thinking over Syntax</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Learn how to integrate, test, and deploy AI-generated components into a cohesive system rather than just producing standalone scripts.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">4</span>
+      <span class="step-title">Become a T-Shaped Engineer</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Become a T-shaped engineer, who is an expert in one area and competent in many others, to survive and thrive in the AI era.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">5</span>
+      <span class="step-title">Prompt Engineering &amp; Intent Communication</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Learn how to precisely communicate requirements in natural language to AI to enable AI-Driven Development (AIDD).</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:var(--blue-dark);">
+      <span class="step-num" style="color:var(--blue-dark);">6</span>
+      <span class="step-title">Build Real Systems</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Build real systems and work in the field of AI Engineering.</p>
+    </div>
+  </div>
+
+  <h2>Words of Hope</h2>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; AI as a Junior Developer</div>
+    <p style="margin:0 0 10px;">We should treat AI like a junior developer, but it's a very different thing to actually replace your junior devs with LLMs.</p>
+    <p style="margin:0 0 10px;">Even so, it's happening everywhere, and it's a worrying trend. Over the past 18 months, there's been a noticeable decline in the number of junior roles. Many job listings focus on Senior roles, asking for "AI-ready" developers. Companies want people who can wrangle these new tools immediately, with a wealth of experience and technical skill to fall back on when the AI creates an issue.</p>
+    <p style="margin:0 0 10px;">The issue is that if we're replacing juniors with AI, who will take charge when they move on? As Grosch warned, <em>"In two years, when your seniors move on, who's left to lead?"</em></p>
+    <p style="margin:0;">AI shouldn't replace juniors, but it should help train them. A good developer grows through curiosity, through debugging, and through failure. Those experiences build intuition and judgment, and while AI could remove some errors in the code, developing skills runs much deeper than simply removing errors from your IDE as quickly as possible.</p>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">&#9888;&#65039; Vibe Coding versus Software Engineering</div>
+    <p style="margin:0 0 10px;">As AI leaders like Sam Altman and Jensen Huang predict a world without programmers, a silent crisis is forming underneath the hype. AI-generated code is flooding the internet—fast, impressive, and deeply fragile. But:</p>
+    <ul style="margin:0 0 0 20px;">
+      <li>Nearly half of AI-generated code contains serious security vulnerabilities</li>
+      <li>"vibe-coded" apps often collapse when real users arrive</li>
+      <li>Debugging AI-written code is often harder than writing it from scratch</li>
+      <li>Dream of a one-person billion-dollar company is mostly a myth</li>
+    </ul>
+  </div>
+
+  <div class="box box-green">
+    <div class="box-title">&#127919; Treating AI like a Helpful Colleague</div>
+    <p style="margin:0;">Treating AI like a helpful colleague rather than a shortcut lets new engineers learn faster without skipping the foundations.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       MIDTERM QUESTION BANK — MODULE 1
+       ═══════════════════════════════════════════════════════ -->
+  <hr style="border:none;border-top:3px solid var(--blue-dark);margin:60px 0 40px;">
+
+  <div style="background:var(--blue-dark);color:#fff;border-radius:10px;
+              padding:20px 28px;margin:0 0 32px;">
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;
+                text-transform:uppercase;opacity:0.7;margin-bottom:4px;">
+      CSE 3225 Software Engineering
+    </div>
+    <div style="font-size:1.6rem;font-weight:800;line-height:1.2;">
+      Module 1 &mdash; Question Bank
+    </div>
+    <div style="font-size:0.9rem;opacity:0.8;margin-top:6px;">
+      10 Questions &nbsp;|&nbsp; Descriptive &middot; Conceptual &middot; Analytical &middot; Coding
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin:0 0 32px;">
+    <span style="background:#E6F1FB;border:1px solid #85B7EB;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#0C447C;">
+      &#128221; Descriptive
+    </span>
+    <span style="background:#E1F5EE;border:1px solid #5DCAA5;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#085041;">
+      &#128161; Conceptual
+    </span>
+    <span style="background:#EEEDFE;border:1px solid #AFA9EC;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#26215C;">
+      &#128202; Analytical
+    </span>
+    <span style="background:#FAEEDA;border:1px solid #EF9F27;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#412402;">
+      &#128187; Coding / Calculation
+    </span>
+  </div>
+
+  <!-- ─── Q1 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#0C447C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#0C447C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">1</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Define software engineering and explain why it is considered a separate field from general programming.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--blue-med);
+                        list-style:none;padding:6px 0;">
+          &#9654; Show Sample Answer
+        </summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid var(--blue-med);">
+          <p style="margin:0 0 8px;">Software engineering is defined as the <strong>systematic, disciplined, and quantifiable approach</strong> to developing, operating, maintaining, and evolving software systems. It applies engineering principles to software construction.</p>
+          <p style="margin:0;">It is separate from general programming because software systems are vastly more complex than simple programs. The Linux Foundation's open-source projects alone contain over <strong>1.7 billion lines of code</strong> involving 65,000 developers. Managing such scale requires structured processes, not just coding skills. Software also faces unique challenges — complexity, conformity, changeability, and invisibility — that cannot be solved by writing code alone.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q2 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#0C447C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#0C447C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">2</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Describe the Ariane 5 rocket explosion (1996). What were the three key software engineering failures that caused it?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--blue-med);
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid var(--blue-med);">
+          <p style="margin:0 0 8px;">The Ariane 5 rocket (Flight 501) exploded on June 4, 1996, shortly after take-off due to a catastrophic software error. The three key failures were:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li><strong>Integer Overflow:</strong> Software tried to convert a 64-bit floating-point number (horizontal velocity) into a 16-bit signed integer. Since Ariane 5 was faster than Ariane 4, the value exceeded the maximum of 32,767, causing an overflow error.</li>
+            <li><strong>Reused Software Design:</strong> The inertial reference system was designed for Ariane 4, which had a different trajectory and velocity. It was not adapted for Ariane 5's higher performance.</li>
+            <li><strong>Inappropriate Error Handling:</strong> When the error occurred, both primary and backup computers shut down, sending wrong signals to the boosters, causing the rocket to veer off course and self-destruct.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q3 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">3</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Frederick Brooks identified four essential difficulties of software engineering. Explain each one and describe why they cannot be eliminated by better tools or technology.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;">Brooks called these <strong>essential difficulties</strong> because they are intrinsic to software &mdash; not caused by poor tools:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li><strong>Complexity:</strong> Software is among the most complex human-made constructions. Even satellites and nuclear plants rely heavily on software. No tool removes this inherent complexity.</li>
+            <li><strong>Conformity:</strong> Software must continuously adapt to external changes (laws, business rules). Unlike physics, human decisions change the requirements. Better tools don't prevent the environment from changing.</li>
+            <li><strong>Changeability:</strong> Successful software attracts modification requests constantly. The pressure to evolve is intrinsic to the nature of software success.</li>
+            <li><strong>Invisibility:</strong> Software has no physical form, making it hard to visualize its structure and complexity. Unlike a bridge or circuit, you cannot look at software and immediately understand its shape.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q4 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">4</span>
+      <span style="color:#fff;font-weight:600;flex:1;">What is the difference between essential difficulties and accidental difficulties in software engineering? Give one example of each.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;"><strong>Essential difficulties</strong> are intrinsic to the nature of software itself and cannot be resolved by any technology or better tooling. Example: the <em>invisibility</em> of software &mdash; there is no physical representation that lets you see its full structure at a glance.</p>
+          <p style="margin:0;"><strong>Accidental difficulties</strong> are incidental problems caused by the current state of tools and environments, and can be solved with better training, tools, or resources. Example: an <em>IDE that frequently crashes</em>, or a compiler with cryptic error messages. These are frustrating but addressable.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q5 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">5</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Explain what SDLC stands for and list four benefits that a structured SDLC provides to a software project.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;"><strong>SDLC</strong> stands for <strong>Software Development Life Cycle</strong>. It is a structured framework that defines the stages involved in developing software systems, from initial idea to deployment and maintenance.</p>
+          <p style="margin:0 0 4px;">Four benefits of a structured SDLC:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li><strong>Predictability</strong> in development</li>
+            <li><strong>Better quality control</strong></li>
+            <li><strong>Reduced development risks</strong></li>
+            <li><strong>Improved communication</strong> among stakeholders</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q6 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">6</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Compare the Waterfall model and the Agile methodology across the following dimensions: development style, requirements handling, delivery approach, and customer role. Which would you recommend for a startup building a new mobile app and why?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid #26215C;">
+          <table style="margin:0 0 12px;">
+            <thead><tr><th>Dimension</th><th>Waterfall</th><th>Agile</th></tr></thead>
+            <tbody>
+              <tr><td>Development Style</td><td>Sequential</td><td>Iterative</td></tr>
+              <tr><td>Requirements</td><td>Fixed early</td><td>Evolving</td></tr>
+              <tr><td>Delivery</td><td>One final product</td><td>Continuous delivery</td></tr>
+              <tr><td>Customer Role</td><td>Limited</td><td>Continuous involvement</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:0;"><strong>Recommendation: Agile.</strong> A startup building a new mobile app typically has uncertain, evolving requirements. Users' preferences will only become clear after real-world usage. Agile allows releasing a small working version every 1&ndash;2 weeks, gathering feedback, and iterating &mdash; reducing the risk of building the wrong product. Waterfall would require locking in all requirements upfront, which is unrealistic for a startup environment.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q7 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">7</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Survey data shows that only 10%&ndash;16% of software projects are completed on time and within budget, with up to 40% cancelled or abandoned. Analyse the reasons behind these failures, specifically relating them to the limitations of the Waterfall model described in the lecture.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;">The survey data (Johnson 1995, Taylor 2000, Jones 2004, Johnson 2013) consistently shows that the majority of software projects fail to meet their objectives. The core limitation is that Waterfall is a <strong>purely predictive, rigid planning approach</strong> that struggles when requirements evolve continuously &mdash; which is the norm in real-world development.</p>
+          <p style="margin:0 0 8px;">Specific Waterfall limitations that cause failures:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li>Requirements are fixed early. If they change later (due to market shifts, regulatory changes, or user feedback), the entire plan breaks.</li>
+            <li>The product is only delivered at the end. Customers cannot provide feedback until it is too late to change course without massive cost.</li>
+            <li>Documentation-heavy processes add overhead but do not guarantee the right system is built.</li>
+            <li>The sequential nature means errors discovered late (in testing or operation) require going back to much earlier phases.</li>
+          </ol>
+          <p style="margin:8px 0 0;">These findings motivated the creation of Agile, which embraces changing requirements and delivers working software incrementally.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q8 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">8</span>
+      <span style="color:#fff;font-weight:600;flex:1;">The lecture states that AI now generates 70&ndash;90% of new code in many organizations. Analyse how this changes the required skill set of a software engineer. In your answer, reference at least three specific skills mentioned in the lecture.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;">When AI generates the majority of code, the developer's role shifts from <em>creator of syntax</em> to <em>reviewer and architect</em>. Three specific skills that become more important:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li><strong>Code review and debugging:</strong> AI generates code faster than humans but struggles with complex, multi-system diagnostics. Engineers must be capable of reading, understanding, and debugging AI-written code &mdash; which the lecture notes is often harder than writing from scratch.</li>
+            <li><strong>System-level thinking:</strong> Instead of producing standalone scripts, engineers must integrate, test, and deploy AI-generated components into coherent systems. This requires architectural knowledge beyond syntax.</li>
+            <li><strong>Prompt engineering &amp; intent communication:</strong> Engineers must precisely communicate requirements in natural language to AI. A bad specification scales into an entire codebase full of errors, so the quality of the specification becomes the primary lever of quality.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q9 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#412402;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#412402;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">9</span>
+      <span style="color:#fff;font-weight:600;flex:1;">The Ariane 5 integer overflow occurred because a 64-bit floating-point value was converted into a 16-bit signed integer. What is the maximum value a 16-bit signed integer can hold? If the horizontal velocity value at the time of failure was 40,000, calculate by how much it exceeded this limit. Express your answer as both a raw overflow amount and as a percentage overflow above the limit.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Calculation</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#412402;
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid #412402;">
+          <p style="margin:0 0 8px;">A 16-bit signed integer uses 1 bit for the sign, leaving 15 bits for magnitude:</p>
+          <p style="margin:0 0 4px;"><strong>Maximum value = 2<sup>15</sup> &minus; 1 = 32,768 &minus; 1 = 32,767</strong></p>
+          <p style="margin:0 0 4px;">The lecture confirms this: the value exceeded the maximum limit of <strong>32,767</strong>.</p>
+          <p style="margin:0 0 4px;">If the velocity value was 40,000:</p>
+          <ul style="margin:0 0 8px 20px;">
+            <li><strong>Raw overflow:</strong> 40,000 &minus; 32,767 = <strong>7,233</strong></li>
+            <li><strong>Percentage overflow:</strong> (7,233 &divide; 32,767) &times; 100 &asymp; <strong>22.1% above the maximum</strong></li>
+          </ul>
+          <p style="margin:0;">This illustrates how reusing code without re-validating its assumptions against a new, higher-performance system led to catastrophic failure.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q10 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#412402;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#412402;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">10</span>
+      <span style="color:#fff;font-weight:600;flex:1;">You are an AI tool. A developer gives you this prompt: &ldquo;Build me a student grade management app.&rdquo; Based on the lecture's discussion of AI-generated code risks and the importance of specification, (a) identify two specific dangers of acting on this prompt as-is, and (b) rewrite the prompt to be precise enough to reduce the risk of a bad specification scaling into a bad codebase.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Coding / Applied</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#412402;
+                        list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);
+                    border-radius:8px;border-left:4px solid #412402;">
+          <p style="margin:0 0 8px;"><strong>(a) Two dangers of the vague prompt:</strong></p>
+          <ol style="margin:0 0 12px 20px;line-height:1.8;">
+            <li><strong>Security vulnerabilities at scale:</strong> The lecture states that nearly half of AI-generated code contains serious security vulnerabilities. A vague prompt gives AI no constraints on authentication, access control, or data storage, so the AI may generate insecure patterns that then scale across the entire codebase.</li>
+            <li><strong>Collapse under real usage:</strong> The lecture notes that &ldquo;vibe-coded&rdquo; apps built on underspecified prompts often collapse when real users arrive. Without specifying how many students, what grading scheme, what edge cases (late submissions, absent students), the generated system will likely break under real conditions.</li>
+          </ol>
+          <p style="margin:0 0 8px;"><strong>(b) Improved prompt (example):</strong></p>
+          <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;
+                      font-family:'Courier New',monospace;font-size:13px;
+                      color:#D4D4D4;line-height:1.7;">
+            Build a Python-based student grade management system for a university course.<br>
+            Requirements:<br>
+            - Store student names, IDs, and grades for up to 5 assignments<br>
+            - Calculate the final grade as the average of all assignments (0&ndash;100 scale)<br>
+            - Map final grades to letter grades: A&ge;90, B&ge;80, C&ge;70, D&ge;60, F below 60<br>
+            - Allow adding, updating, and deleting student records<br>
+            - Handle edge cases: missing grades should be treated as 0<br>
+            - Store data in a CSV file; no database required<br>
+            - Do not include any web interface; CLI only
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</body>
+</html>

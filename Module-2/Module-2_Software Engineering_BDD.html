@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 7 — BDD and User Stories</title>
+  <style>
+
+    /* ─── Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:    #1F4E79;
+      --blue-med:     #2E75B6;
+      --blue-light:   #D6E4F0;
+      --teal:         #006064;
+      --teal-light:   #E0F7FA;
+      --amber:        #7B4F00;
+      --amber-light:  #FFF8E1;
+      --green-dark:   #1B5E20;
+      --green-light:  #E8F5E9;
+      --gray-light:   #F5F5F5;
+      --text:         #1A1A2E;
+      --text-muted:   #555;
+      --border:       #DDD;
+      --page-bg:      #FFFFFF;
+      --font:         'Segoe UI', Arial, sans-serif;
+      --font-mono:    'Courier New', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--page-bg);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 48px 80px;
+    }
+
+    /* ─── Typography ───────────────────────────────────────────── */
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      border-bottom: 3px solid var(--blue-med);
+      padding-bottom: 8px;
+      margin: 48px 0 18px;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--blue-med);
+      margin: 36px 0 12px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 24px 0 8px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    a { color: var(--blue-med); }
+
+    strong { font-weight: 700; }
+    em     { font-style: italic; }
+
+    /* ─── Lists ────────────────────────────────────────────────── */
+    ul, ol {
+      margin: 8px 0 16px 24px;
+    }
+    li { margin-bottom: 6px; }
+
+    /* ─── Code ─────────────────────────────────────────────────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: #F0F0F0;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: #1E1E1E;
+      color: #D4D4D4;
+      padding: 18px 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      line-height: 1.6;
+    }
+
+    /* ─── Tables ───────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.93em;
+    }
+    th {
+      background: var(--blue-dark);
+      color: #FFF;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* ─── Callout boxes ────────────────────────────────────────── */
+    .box {
+      border-left: 5px solid var(--teal);
+      background: var(--teal-light);
+      border-radius: 0 6px 6px 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+    }
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--teal);
+    }
+
+    .box-ai {
+      border-left-color: var(--amber);
+      background: var(--amber-light);
+    }
+    .box-ai .box-title { color: var(--amber); }
+
+    .box-warn {
+      border-left-color: #C62828;
+      background: #FFEBEE;
+    }
+    .box-warn .box-title { color: #C62828; }
+
+    .box-note {
+      border-left-color: var(--blue-med);
+      background: var(--blue-light);
+    }
+    .box-note .box-title { color: var(--blue-dark); }
+
+    .box-green {
+      border-left-color: var(--green-dark);
+      background: var(--green-light);
+    }
+    .box-green .box-title { color: var(--green-dark); }
+
+    /* ─── Page header / cover ──────────────────────────────────── */
+    .cover {
+      text-align: center;
+      padding: 48px 0 32px;
+      border-bottom: 2px solid var(--blue-light);
+      margin-bottom: 12px;
+    }
+    .cover-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--blue-dark);
+      line-height: 1.2;
+    }
+    .cover-subtitle {
+      font-size: 1.80rem;
+      color: var(--blue-med);
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .cover-meta-item {
+      background: var(--blue-dark);
+      color: #FFF;
+      border-radius: 8px;
+      padding: 10px 24px;
+      min-width: 160px;
+      text-align: center;
+    }
+    .cover-meta-item .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    .cover-meta-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ─── TOC ──────────────────────────────────────────────────── */
+    .toc {
+      background: var(--gray-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 28px;
+      margin: 32px 0 40px;
+    }
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    .toc ol { margin: 0 0 0 18px; }
+    .toc li { margin-bottom: 4px; font-size: 0.95em; }
+    .toc a { text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ─── Section divider ──────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* ─── Self-check / exercise block ─────────────────────────── */
+    .exercise {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      background: #FAFAFA;
+    }
+    .exercise-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .brooks-card {
+    display: flex;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0 32px;
+  }
+  .brooks-img-col {
+    flex: 0 0 200px;
+    background: var(--gray-light);
+    overflow: hidden;
+  }
+  .brooks-img-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+  .brooks-quote-col {
+    flex: 1;
+    background: var(--page-bg);
+    padding: 28px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 3px solid var(--blue-dark);
+  }
+  .brooks-quotemark {
+    font-size: 56px;
+    line-height: 1;
+    color: var(--blue-med);
+    font-family: Georgia, serif;
+    margin-bottom: -8px;
+  }
+  .brooks-quote-text {
+    font-size: 15.5px;
+    line-height: 1.75;
+    font-style: italic;
+    color: var(--text);
+    font-family: Georgia, serif;
+    margin: 0 0 20px;
+  }
+  .brooks-quote-text strong {
+    font-style: normal;
+    color: var(--blue-dark);
+  }
+  .brooks-meta {
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .brooks-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .brooks-role {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .brooks-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    text-decoration: none;
+    border: 1px solid var(--blue-light);
+    background: var(--blue-light);
+    border-radius: 4px;
+    padding: 3px 9px;
+    color: var(--blue-dark);
+    font-family: var(--font);
+  }
+  .cf-card {
+    display: flex;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0 32px;
+  }
+  .cf-img-col {
+    flex: 0 0 190px;
+    overflow: hidden;
+  }
+  .cf-img-col img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+  .cf-quote-col {
+    flex: 1;
+    background: var(--page-bg);
+    padding: 24px 26px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 3px solid #854F0B;
+  }
+  .cf-quotemark {
+    font-size: 52px;
+    line-height: 1;
+    color: #BA7517;
+    font-family: Georgia, serif;
+    margin-bottom: -6px;
+  }
+  .cf-quote-text {
+    font-size: 14px;
+    line-height: 1.75;
+    font-style: italic;
+    color: var(--text);
+    font-family: Georgia, serif;
+    margin: 0 0 12px;
+  }
+  .cf-highlight {
+    font-style: normal;
+    font-weight: 700;
+    color: #633806;
+  }
+  .cf-pattern {
+    display: block;
+    background: #FFF8E1;
+    border-left: 3px solid #EF9F27;
+    padding: 7px 12px;
+    margin: 4px 0 14px;
+    font-size: 13.5px;
+    font-style: normal;
+    font-weight: 700;
+    color: #412402;
+    font-family: Georgia, serif;
+  }
+  .cf-meta {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .cf-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .cf-role {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .cf-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    text-decoration: none;
+    border: 1px solid #FAC775;
+    background: #FAEEDA;
+    border-radius: 4px;
+    padding: 3px 9px;
+    color: #412402;
+  }
+  .cf-source:hover { background: #BA7517; color: #fff; }
+  .brooks-source:hover { background: var(--blue-med); color: #fff; }
+    /* ─── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { max-width: 100%; padding: 20px 30px; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      pre, .box, table { page-break-inside: avoid; }
+    }
+.migration-bar {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 24px 0 32px;
+  }
+  .migration-header {
+    background: var(--blue-dark);
+    padding: 9px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .migration-header span {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--blue-light);
+  }
+  .migration-body {
+    background: var(--page-bg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .migration-icon {
+    flex: 0 0 38px;
+    font-size: 26px;
+    margin-top: 2px;
+  }
+  .migration-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    margin: 0 0 14px;
+  }
+  .migration-text strong { color: var(--blue-dark); }
+  .migration-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 13px;
+    border-radius: 20px;
+  }
+  .pill-blue   { background: #E6F1FB; color: #0C447C; border: 1px solid #85B7EB; }
+  .pill-teal   { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
+  .pill-amber  { background: #FAEEDA; color: #412402; border: 1px solid #EF9F27; }
+  .pill-purple { background: #EEEDFE; color: #26215C; border: 1px solid #AFA9EC; }
+
+  .responsive-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       COVER
+       ═══════════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-title">Module 2: Requirements</div>
+    <div class="cover-subtitle">Behavior-Driven Design, User Stories &amp; AI-Augmented Workflows</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Topic </div>
+        <div class="value">Software Engineering</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Reference Book</div>
+        <a href="https://saasbook.info/" target="_blank"><div class="value">Fox &amp; Patterson (ESaaS)</div></a>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Language</div>
+        <div class="value">Python</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       TABLE OF CONTENTS
+       ═══════════════════════════════════════════════════════ -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      
+      <li><a href="#s1">What are Requirements?</a></li>
+      <li><a href="#s2">Why understanding requirements is difficult</a></li>
+      <li><a href="#s3">Why Requirements Matter Even More in the Age of AI</a></li>
+      <li><a href="#s4">Behavior-Driven Design and User Stories</a></li>
+      <li><a href="#s5">SMART User Stories</a></li>
+      <li><a href="#s6">Lo-Fi UI Sketches and Storyboards</a></li>
+      <li><a href="#s7">Story Points and Velocity</a></li>
+      <li><a href="#s8">From User Stories to Acceptance Tests: Behave (Python)</a></li>
+      <li><a href="#s9">Pros and Cons of BDD</a></li>
+     
+    </ol>
+  </nav>
+<!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — What are Requirements?
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s1">1. What are Requirements?</h1>
+  <p>The requirements for a system are the descriptions of what the system should do—
+the services that it provides and the constraints on its operation. </p>
+  <p>Software system requirements are often classified as functional requirements or non
+functional requirements:</p>
+  <ol>
+    <li>
+      <strong>Functional requirements:</strong> These are statements of services the system should
+      provide, how the system should react to particular inputs, and how the system should behave in particular situations. In some cases, the functional require
+      ments may also explicitly state what the system should not do.
+    </li>
+    <li>
+      <strong>Non-functional requirements:</strong> Non-functional requirements, as the name suggests, are requirements that are not
+directly concerned with the specific services delivered by the system to its users. Examples include performance, security, reliability, maintainability, and usability requirements.
+    </li>
+  </ol>
+
+  <hr class="divider" />
+   <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — Why Understanding Requirements is Difficult
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s2">2. Why understanding requirements is difficult</h1>
+  <div class="brooks-card">
+  <div class="brooks-img-col">
+    <img src="fredrick_P_Brooks.webp" alt="Portrait of Frederick P. Brooks Jr." />
+  </div>
+  <div class="brooks-quote-col">
+    <div>
+      <div class="brooks-quotemark">&ldquo;</div>
+      <p class="brooks-quote-text">
+        The hardest single part of building a software system is
+        <strong>deciding precisely what to build.</strong>
+      </p>
+    </div>
+    <div class="brooks-meta">
+      <div class="brooks-name">Frederick P. Brooks, Jr.</div>
+      <div class="brooks-role">
+        American software engineer &amp; computer scientist<br>
+        Professor, University of North Carolina, Chapel Hill
+      </div>
+      <a class="brooks-source"
+         href="https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf"
+         target="_blank">
+        &#128196; No Silver Bullet (1986)
+      </a>
+    </div>
+  </div>
+</div>
+<!-- ── end Brooks quote card ─────────────────────── -->
+  <p>Jeff Patton in his book User Story Mapping uses a striking real-world example (borrowed from Jen Yates's Cake Wrecks) to illustrate how written requirements can be dangerously ambiguous and open to misunderstanding. A customer orders a farewell cake, asking for the text "So long, Alicia" written in purple, with stars around it. The employee writes this down and passes the note to the decorator, who interprets every word on the note with painful literalness:</p>
+  
+  <img src="cake-1.png" alt="A cake with the text 'So long, Alicia' written in purple, with stars around it." />
+  <p>Here is another example:</p>
+  <img src="cake-2.png" alt="A cake with the text 'Nuts Allergy Happy Birthday Peter" />
+  <p>Sometimes stateholders might mistakenly think they have an agreement on a written document while because of miscommunication they have entirely different  understandings in their heads: </p>
+  <img src="shared_understanding.png" alt="A pics depicting shared understanding." />
+  <p>In software development, this problem is even more pronounced. The requirements are often complex, technical, and abstract. They are also often incomplete, changing, and subject to interpretation. This can lead to a lot of wasted time and effort as developers build the wrong thing, or as they have to go back and forth with stakeholders to clarify the requirements.</p>
+  <p>In this and subsequent lessons we would see how BDD and other agile techniques can help address the challenges of miscommunication and misunderstanding among stakeholders.</p>
+  <p>In the next section, we will see how the rise of AI has made it even more important to have clear and precise requirements, as the rigor of software development shifts from writing code to specifying intent.</p>
+  
+
+
+  <hr class="divider" />
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — Why Requirements Matter Even More in the Age of AI
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s3">3. Why Requirements Matter Even More in the Age of AI</h1>
+  <div class="cf-card">
+  <div class="cf-img-col">
+    <img src="chadfowler.png" alt="Portrait of Chad Fowler" />
+  </div>
+  <div class="cf-quote-col">
+    <div>
+      <div class="cf-quotemark">&ldquo;</div>
+      <p class="cf-quote-text">
+        The rigor relocated from <span class="cf-highlight">who writes the code</span>
+        to <span class="cf-highlight">what the code must satisfy.</span>
+        The tests don't care whether a human or a machine produced the implementation.
+        They care whether it <span class="cf-highlight">behaves</span>  correctly.
+      </p>
+      <div class="cf-pattern">The pattern is: probabilistic inside, deterministic at the edges.</div>
+      <p class="cf-quote-text">
+        This is harder than it sounds. <span class="cf-highlight">Specifying intent</span> precisely enough that a machine
+        can generate correct implementations is <span class="cf-highlight">not easier</span> than writing code. It's a
+        different skill, and in some ways a more demanding one. You have to know
+        <span class="cf-highlight">what you actually want.</span>
+        You have to be able to recognize when you've gotten it.
+      </p>
+    </div>
+    <div class="cf-meta">
+      <div class="cf-name">Chad Fowler</div>
+      <div class="cf-role">Software engineer, author &amp; technology executive</div>
+      <a class="cf-source"
+         href="https://aicoding.leaflet.pub/3mbrvhyye4k2e"
+         target="_blank">
+        &#8599; Relocating Rigor
+      </a>
+    </div>
+  </div>
+</div>
+<!-- ── end Chad Fowler quote card ────────────────── -->
+   <div class="migration-bar">
+  <div class="migration-header">
+    <span>&#128200; Future of Software Development Retreat February 2026 Findings</span>
+  </div>
+  <div class="migration-body">
+    <div class="migration-icon">&#128161;</div>
+    <div>
+      <p class="migration-text">
+        In Februrary 2026, Thoughtworks hosted a workshop called “The Future of Software Development” in Deer Valley Utah. One of their key findings was that engineering quality <strong>doesn't disappear</strong> when AI writes code.
+        It <strong>migrates</strong> — moving from the act of writing code
+        into specs, tests, constraints, and risk management.
+      </p>
+      <div class="migration-pills">
+        <span class="pill pill-blue">&#128196; Specs</span>
+        <span class="pill pill-teal">&#129514; Tests</span>
+        <span class="pill pill-amber">&#128274; Constraints</span>
+        <span class="pill pill-purple">&#128737; Risk management</span>
+      </div>
+      <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+        <a href="https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf"
+           target="_blank"
+           style="font-size: 12px; color: var(--blue-med); text-decoration: none;
+                  display: inline-flex; align-items: center; gap: 5px;
+                  border: 1px solid var(--blue-light); background: var(--blue-light);
+                  border-radius: 4px; padding: 4px 10px; color: var(--blue-dark);">
+          &#128196; Future of Software Engineering - Workshop Findings and Insights in PDF (ThoughtWorks)
+        </a>
+      </div>
+    </div>
+  </div>
+  
+</div>
+<p>Software experts are increasingly moving their attention to the plan the software. The logic is simple: in an
+    AI-powered workflow, as AI can generate code based on the specification, the specification is where you have the most power to stop mistakes. Since AI scales whatever you
+    give it, a bad plan will result in an entire codebase full of errors</p>
+  <p>Many practitioners are adopting structured methodologies—such as EARS (Easy Approach to Requirements Syntax) and spec-driven development—to refine requirement elicitation in AI-assisted workflows. </p>
+  
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 4 — BDD & USER STORIES
+       ══════════════════════════════════════════════════════ -->
+  <h1 id="s4">4. Behavior-Driven Design and User Stories</h1>
+
+  <p>For the Plan-and-Document lifecycle, requirements elicitation is done via <strong>interviewing, scenarios, </strong> and <strong>use cases</strong>; requirements
+documentation is done via a <strong>Software Requirements Specification (SRS)</strong>, which is a foundational document that completely describes the expected purpose, behavior, features, and constraints of a software application; requirements fulfillment is done using requirements traceability.</p>
+  <p>In contrast, for the Agile lifecycle, which follows <strong>Behavior Driven Development (BDD)</strong>, functional requirements elicitation is done via <strong style="color:#ff0000;">user stories</strong>, UI requirement elicitation is done via <strong>Low-fidelity (Lo-fi) user interfaces</strong> and <strong>storyboards</strong>; and user stories are transformed into <strong>acceptance tests</strong> to make it sure that the requirements are met.</p>
+  <p>The figure below illustrates one iteration of the Agile lifecycle:</p>
+  <img src="agile-lifecycle.png" alt="A diagram illustrating the Agile lifecycle." class="responsive-image"/>
+  <p>The Agile lifecycle involves:</p>
+  <ul>
+    <li>Working closely and continuously with stakeholders to develop requirements and tests.</li>
+    <li>Maintaining a working prototype while deploying new features typically every two
+weeks—called an iteration—and checking in with stakeholders to decide what to add
+next and to validate that the current system is what they really want. Having a working
+prototype and prioritizing features reduces the chances of a project being late or over
+budget.</li>
+  </ul>
+  
+<!-- BDD intro -->
+<div class="box box-note" style="margin:24px 0;">
+  <div class="box-title">Behavior-Driven Design (BDD)</div>
+  <p style="margin:0;">We start the Agile lifecycle with <strong>Behavior-Driven Design (BDD)</strong>. BDD asks questions
+  about the behavior of an application before and during development so that the stakeholders
+  are less likely to miscommunicate.</p>
+  <p style="margin:8px 0 0;">Requirements are written down as in plan-and-document,
+  but unlike plan-and-document, requirements are <strong>continuously refined</strong> to ensure the resulting
+  software meets the stakeholders' desires.</p>
+</div>
+
+<p>The BDD version of requirements is <strong>user stories</strong>, which describe how the application
+is expected to be used. They are lightweight versions of requirements that are better suited
+to Agile. User stories help stakeholders <strong>plan and prioritize development</strong>.</p>
+
+<p>Thus, like plan-and-document, you start with requirements, but in BDD <strong>user stories take the place of design
+documents</strong> in plan-and-document.</p>
+
+<!-- 3x5 cards origin -->
+<div class="box box-green" style="margin:20px 0;">
+  <div class="box-title">Origin: 3×5 Cards from the HCI Community</div>
+  <p style="margin:0;">User stories came from the <strong>Human Computer Interface (HCI) community</strong>. They developed
+  them using <strong>3×5 cards</strong> (or A7-size cards), each with a user story of one to three sentences
+  written jointly by the customers and developers. The rationale is that paper cards are
+  nonthreatening and <strong>easy to rearrange</strong>, thereby enhancing <strong>collaborative brainstorming and prioritizing</strong>.</p>
+  <p style="margin:8px 0 0;font-size:1em;color:var(--text-muted);color:#ff0000">Note that individual developers working by themselves without customer interaction
+  don't need these 3-by-5 cards.</p>
+</div>
+
+<!-- RottenPotatoes example -->
+<h2>Example: The RottenPotatoes App</h2>
+
+<p>Suppose we want to develop a movie rating app like famous Rotten Tomatoes, named
+<strong>RottenPotatoes</strong> in which we have two stakeholders:</p>
+<ul>
+  <li>The <strong>operators</strong> of RottenPotatoes, and</li>
+  <li>The <strong>movie fans</strong> who are end-users of RottenPotatoes.</li>
+</ul>
+
+<p>The user story we picked is to add movies to the RottenPotatoes database and we can write
+the user story in <strong>Connextra format</strong> as follows:</p>
+
+<!-- User story example block -->
+<div style="margin:16px 0 24px;">
+  <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+              letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+              border-radius:8px 8px 0 0;">
+    &#128196; User Story — Connextra Format (Example)
+  </div>
+  <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:2;background:#1E1E1E;"><span style="color:#569CD6;font-weight:bold;">Feature:</span> <span style="color:#CE9178;">Add a movie to RottenPotatoes</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;As a</span>       <span style="color:#DCDCAA;">movie fan</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;So that</span>    <span style="color:#DCDCAA;">I can share a movie with other movie fans</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;I want to</span>  <span style="color:#DCDCAA;">add a movie to RottenPotatoes database</span></pre>
+</div>
+
+<p>The general Connextra format is:</p>
+
+<!-- General Connextra format block -->
+<div style="margin:16px 0 32px;">
+  <div style="background:#374151;color:#fff;font-size:11.5px;font-weight:600;
+              letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+              border-radius:8px 8px 0 0;">
+    &#128736; Connextra Format — General Template
+  </div>
+  <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:2;background:#1E1E1E;"><span style="color:#569CD6;font-weight:bold;">Feature:</span>  <span style="color:#CE9178;">[feature name]</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;As a</span>      <span style="color:#C8C8C8;">[Kind of stakeholder]</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;So that</span>   <span style="color:#C8C8C8;">[I can achieve some goal]</span>
+<span style="color:#4EC9B0;">&nbsp;&nbsp;&nbsp;&nbsp;I want to</span> <span style="color:#C8C8C8;">[do some task]</span></pre>
+</div>
+<!-- ── Elaboration: User Stories and Case Analysis ── -->
+<div class="box box-note" style="margin:24px 0;">
+  <div class="box-title">&#128218; Elaboration: User Stories and Use-Case Analysis</div>
+  <p>User stories are a <strong>lightweight approach to use-case analysis</strong>. A full use case analysis is more heavyweight and includes:</p>
+  <ul style="margin:8px 0 12px 20px;">
+    <li><strong>Use case name</strong> and <strong>actor(s)</strong></li>
+    <li><strong>Goals</strong> of the action and a <strong>summary</strong> of the use case</li>
+    <li><strong>Preconditions</strong> — state of the world before the action</li>
+    <li><strong>Steps</strong> — both user actions and system responses</li>
+    <li><strong>Related use cases</strong> and <strong>postconditions</strong> — state of the world after the action</li>
+  </ul>
+  <p>A <strong>use case diagram</strong> is a type of UML diagram that uses stick figures for actors, and can generalize, extend, or include use cases by reference. For example, a use case for <em>"logged-in user views account summary"</em> can include <em>"user logs in"</em> by reference — since logging in is a precondition.</p>
+</div>
+<!-- ── end Elaboration box ───────────────────────── -->
+ <!-- ── AI in Practice box ───────────────────────── -->
+<div class="box box-ai" style="margin:24px 0;">
+  <div class="box-title">&#129302; AI in Practice: Drafting User Stories with LLMs</div>
+  <p>Modern teams now use LLMs (Claude, ChatGPT, Gemini) to <strong>draft initial user stories
+  from stakeholder interview transcripts</strong>. This is now standard practice at companies like
+  Deloitte, where product managers <em>"use GenAI to transform business requirements into user
+  stories, built on context from prior stories."</em></p>
+
+  <p style="margin:14px 0 6px;"><strong>&#128172; Sample Prompt:</strong></p>
+  <div style="background:#FFF3CD;border-left:3px solid #EF9F27;border-radius:0 6px 6px 0;
+              padding:12px 16px;font-size:13.5px;font-style:italic;color:#412402;margin-bottom:14px;">
+    "Here is a transcript of a 30-minute stakeholder interview about [product]. Generate 5 user
+    stories in Connextra format. For each story, also generate 3 acceptance criteria in Gherkin
+    (Given/When/Then). Flag any ambiguities you find in the transcript."
+  </div>
+
+  <p style="margin:0 0 6px;"><strong>&#128202; Research Caveat (SIGCSE 2025):</strong></p>
+  <p>A peer-reviewed study found that <strong>LLMs help students develop better acceptance
+  criteria</strong>, but <strong>students do better without AI when scoping the story
+  correctly</strong>. The lesson: use AI as a <em>first draft generator and acceptance criteria
+  checker</em>, but the human must judge whether the scope is right.</p>
+
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #EFD89A;">
+    <a href="https://arxiv.org/pdf/2502.02675" target="_blank"
+       style="font-size:12px;text-decoration:none;background:#FAEEDA;color:#412402;
+              border:1px solid #EF9F27;border-radius:4px;padding:4px 10px;">
+      &#128196; Brockenbrough et al., SIGCSE 2025
+    </a>
+  </div>
+</div>
+<!-- ── end AI in Practice box ───────────────────── -->
+<hr class="divider" />
+<!-- ── end Section 1 body content ────────────────── -->
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 5 — SMART USER STORIES
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s5">5. SMART User Stories</h1>
+<!-- ── SMART User Stories ────────────────────────── -->
+<p>What makes a good user story versus a bad one? The <strong>SMART</strong> acronym offers 
+concrete and memorable guidelines:</p>
+
+<!-- SMART pills row -->
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 28px;">
+  <div style="background:#E6F1FB;border:1px solid #85B7EB;border-radius:8px;
+              padding:12px 18px;flex:1;min-width:120px;text-align:center;">
+    <div style="font-size:1.4rem;font-weight:800;color:#0C447C;">S</div>
+    <div style="font-size:0.85rem;font-weight:600;color:#0C447C;">Specific</div>
+  </div>
+  <div style="background:#E1F5EE;border:1px solid #5DCAA5;border-radius:8px;
+              padding:12px 18px;flex:1;min-width:120px;text-align:center;">
+    <div style="font-size:1.4rem;font-weight:800;color:#085041;">M</div>
+    <div style="font-size:0.85rem;font-weight:600;color:#085041;">Measurable</div>
+  </div>
+  <div style="background:#FAEEDA;border:1px solid #EF9F27;border-radius:8px;
+              padding:12px 18px;flex:1;min-width:120px;text-align:center;">
+    <div style="font-size:1.4rem;font-weight:800;color:#412402;">A</div>
+    <div style="font-size:0.85rem;font-weight:600;color:#412402;">Achievable</div>
+  </div>
+  <div style="background:#EEEDFE;border:1px solid #AFA9EC;border-radius:8px;
+              padding:12px 18px;flex:1;min-width:120px;text-align:center;">
+    <div style="font-size:1.4rem;font-weight:800;color:#26215C;">R</div>
+    <div style="font-size:0.85rem;font-weight:600;color:#26215C;">Relevant</div>
+  </div>
+  <div style="background:#FCE4EC;border:1px solid #F48FB1;border-radius:8px;
+              padding:12px 18px;flex:1;min-width:120px;text-align:center;">
+    <div style="font-size:1.4rem;font-weight:800;color:#880E4F;">T</div>
+    <div style="font-size:0.85rem;font-weight:600;color:#880E4F;">Timeboxed</div>
+  </div>
+</div>
+
+<!-- S — Specific -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#0C447C;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#fff;color:#0C447C;font-weight:800;font-size:1rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">S</span>
+    <span style="color:#fff;font-weight:600;font-size:0.95rem;">Specific</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 12px;">A user story must clearly identify what feature is needed. 
+    Here is an example of a vague feature paired with a specific version:</p>
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;font-size:13.5px;
+                line-height:1.9;background:#1E1E1E;">
+<span style="color:#F44747;">1</span>  <span style="color:#569CD6;">Feature:</span> <span style="color:#CE9178;">User can search for a movie</span>              <span style="color:#6A9955;">// vague</span>
+<span style="color:#F44747;">2</span>  <span style="color:#569CD6;">Feature:</span> <span style="color:#CE9178;">User can search for a movie by title</span>     <span style="color:#6A9955;">// specific ✓</span></pre>
+  </div>
+</div>
+
+<!-- M — Measurable -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#085041;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#fff;color:#085041;font-weight:800;font-size:1rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">M</span>
+    <span style="color:#fff;font-weight:600;font-size:0.95rem;">Measurable</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 12px;">Adding Measurable to Specific means that each story should be 
+    <strong>testable</strong>, which implies that there are known expected results for some good 
+    inputs. Here is an example of an unmeasurable feature versus its measurable counterpart:</p>
+    <pre style="margin:0 0 12px;border-radius:6px;padding:14px 18px;font-size:13.5px;
+                line-height:1.9;background:#1E1E1E;">
+<span style="color:#F44747;">1</span>  <span style="color:#569CD6;">Feature:</span> <span style="color:#CE9178;">RottenPotatoes should have good response time</span>     <span style="color:#6A9955;">// unmeasurable</span>
+<span style="color:#F44747;">2</span>  <span style="color:#569CD6;">Feature:</span> <span style="color:#CE9178;">When adding a movie, 99% of Add Movie pages</span>      <span style="color:#6A9955;">// measurable ✓</span>
+<span style="color:#F44747;">3</span>           <span style="color:#CE9178;">should appear within 3 seconds</span></pre>
+    <p style="margin:0;font-size:0.9em;color:var(--text-muted);">Only the second case can be 
+    tested to see if the system fulfills the requirement.</p>
+  </div>
+</div>
+
+<!-- A — Achievable -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#412402;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#fff;color:#412402;font-weight:800;font-size:1rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">A</span>
+    <span style="color:#fff;font-weight:600;font-size:0.95rem;">Achievable</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0;">Ideally, you implement the user story in <strong>one Agile 
+    iteration</strong>. If you are getting less than one story per iteration, then they are 
+    too big and you need to subdivide these stories into smaller ones. </p>
+  </div>
+</div>
+
+<!-- R — Relevant + Five Whys -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#26215C;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#fff;color:#26215C;font-weight:800;font-size:1rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">R</span>
+    <span style="color:#fff;font-weight:600;font-size:0.95rem;">Relevant</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 12px;">A user story must have <strong>business value</strong> to one 
+    or more stakeholders. To drill down to the real business value, one technique is to keep 
+    asking <strong>"Why"</strong> — the <strong>Five Whys</strong>. Using a ticket-selling app 
+    for a regional theater as an example, suppose the proposal is to add a Facebook linking 
+    feature, here are the “Five Whys” in action with their <strong>recursive</strong>
+questions and answers:</p>
+
+    <!-- Five Whys -->
+    <div style="background:#F8F6FF;border:1px solid #AFA9EC;border-radius:8px;
+                padding:16px 18px;margin:4px 0 0;">
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;
+                  letter-spacing:0.07em;color:#26215C;margin-bottom:12px;">
+        &#10067; The Five Whys
+      </div>
+      <ol style="margin:0 0 0 18px;line-height:1.9;font-size:0.93em;">
+        <li><strong>Why add the Facebook feature?</strong> — As box office manager, I think 
+        more people will go with friends and enjoy the show more.</li>
+        <li><strong>Why does it matter if they enjoy the show more?</strong> — I think we will 
+        sell more tickets.</li>
+        <li><strong>Why do you want to sell more tickets?</strong> — Because then the theater 
+        makes more money.</li>
+        <li><strong>Why does the theater want to make more money?</strong> — We want to make 
+        more money so that we don't go out of business.</li>
+        <li><strong>Why does it matter that the theater is in business next year?</strong> — 
+        If not, I have no job.</li>
+      </ol>
+      <p style="margin:10px 0 0;font-size:0.88em;font-style:italic;color:var(--text-muted);">
+        We're pretty sure the business value is now apparent to at least one stakeholder!
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- T — Timeboxed -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 28px;">
+  <div style="background:#880E4F;padding:9px 16px;display:flex;align-items:center;gap:10px;">
+    <span style="background:#fff;color:#880E4F;font-weight:800;font-size:1rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">T</span>
+    <span style="color:#fff;font-weight:600;font-size:0.95rem;">Timeboxed</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 10px;">Timeboxing means that you <strong>stop developing a story 
+    once you've exceeded the time budget</strong>. Either you give up, divide the user story 
+    into smaller ones, or reschedule what is left according to a new estimate. If dividing 
+    looks like it won't help, then you go back to the customers to find the highest value 
+    part of the story that you can do quickly.</p>
+    <p style="margin:0;">The reason for a time budget per user story is that without careful accounting of each iteration, the whole project 
+    could be late, and thus fail. Learning to budget a software project is a critical skill, 
+    and exceeding a story budget and then refactoring it is one way to acquire that skill.</p>
+  </div>
+</div>
+
+<!-- MVP box -->
+<div class="box box-green">
+  <div class="box-title">&#127919; Minimum Viable Product (MVP)</div>
+  <p style="margin:0;">One important concept expands upon the <strong>R</strong> of SMART. 
+  The <strong>minimum viable product (MVP)</strong> is a subset of the full set of features 
+  that when completed has business value in the real world. Not only are the stories Relevant, 
+  but the combination of all of them makes the software product <strong>viable in the 
+  marketplace</strong>. Obviously, you can't start selling the product if it's not viable, 
+  so it makes sense to give priority to the stories that will let the product be shipped.</p>
+</div>
+<!-- ── AI in Practice: SMART Validator ──────────── -->
+<div class="box box-ai" style="margin:24px 0;">
+  <div class="box-title">&#129302; AI in Practice: Using AI as a SMART Validator</div>
+  <p>The software engineer's role transitions from <strong>drafting</strong> to 
+  <strong>evaluating</strong> AI-generated stories against the SMART criteria to prevent 
+  hallucinated or unmeasurable requirements.</p>
+
+  <p style="margin:14px 0 6px;"><strong>&#128172; Sample Prompt:</strong></p>
+  <div style="background:#FFF3CD;border-left:3px solid #EF9F27;border-radius:0 6px 6px 0;
+              padding:12px 16px;font-size:13.5px;font-style:italic;color:#412402;margin-bottom:16px;">
+    "Evaluate the following user story against the SMART criteria (Specific, Measurable, 
+    Achievable, Relevant, Timeboxed). For each criterion, say whether it passes or fails 
+    and explain why. Then suggest an improved version."
+  </div>
+
+  <p style="margin:0 0 8px;"><strong>&#9997;&#65039; Classroom Exercise:</strong></p>
+  <ol style="margin:0 0 0 20px;line-height:1.9;font-size:0.93em;">
+    <li>Deliberately write a <strong>bad</strong> user story</li>
+    <li>Paste it into Claude or ChatGPT with the prompt above</li>
+    <li><strong>Revise</strong> the story based on the AI's critique</li>
+    <li>Compare the AI's critique to the SMART rubric — 
+    <em>does it catch the same problems?</em></li>
+  </ol>
+</div>
+<!-- ── end AI SMART Validator box ───────────────── -->
+<!-- ── end SMART section ─────────────────────────── -->
+
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 6 — LO-FI SKETCHES
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s6">6. Lo-Fi UI Sketches and Storyboards</h1>
+
+  <!-- ── Lo-Fi UI Sketches and Storyboards ─────────── -->
+<p>When adding a new feature, we almost always need to specify a UI. The problem: 
+building software prototypes intimidates stakeholders from suggesting improvements — 
+the exact opposite of what we need at this early stage.</p>
+
+<!-- Lo-Fi box -->
+<div class="box box-note" style="margin:20px 0;">
+  <div class="box-title">&#9999;&#65039; Lo-Fi (Low-Fidelity) UI Sketches</div>
+  <p>The HCI community's solution: use <strong>kindergarten tools</strong> — paper, 
+  pencil, crayons, scissors. Just as they advocate 3×5 cards for user stories, they 
+  recommend paper prototypes for UI mockups. These <strong>lo-fi sketches</strong> are:</p>
+  <ul style="margin:8px 0 0 20px;">
+    <li><strong>Non-threatening</strong> — no one hesitates to cross out a pencil sketch</li>
+    <li><strong>Easy to discard</strong> — minutes of work, not hours of CSS</li>
+    <li><strong>Inclusive</strong> — no technical skill needed to participate</li>
+  </ul>
+  <p style="margin:10px 0 0;">Ideally, make sketches for <strong>every</strong> user story 
+  that involves a UI. You will have to specify all these details in HTML eventually — it is 
+  far easier to get them right in pencil first.</p>
+</div>
+
+<!-- Storyboard box -->
+<div class="box box-green" style="margin:20px 0;">
+  <div class="box-title">&#127909; Storyboards</div>
+  <p>A lo-fi sketch shows the UI at <em>one instant</em>. A <strong>storyboard</strong> 
+  shows how screens flow as users interact — like a comic strip of the user journey. 
+  Borrowed from filmmaking, a UI storyboard is typically a <strong>tree or graph of 
+  screens</strong> driven by different user choices. It must capture:</p>
+  <ul style="margin:8px 0 0 20px;">
+    <li>Pages or sections of pages</li>
+    <li>Forms and buttons</li>
+    <li>Popups</li>
+  </ul>
+</div>
+
+<!-- Storyboard image -->
+<p>The figure below shows a storyboard of lo-fi sketches for the RottenPotatoes app. 
+The <span style="color:#C2185B;font-weight:600;">pink-highlighted</span> words are 
+clickable links or buttons; the arrows show which screen appears next:</p>
+
+<div style="text-align:center;margin:16px 0 24px;">
+  <img src="storyboard.png" 
+       alt="Lo-fi storyboard for RottenPotatoes showing three screens: home page, 
+            create new movie, and movie details, connected by arrows."
+       style="max-width:420px;width:100%;border:1px solid var(--border);
+              border-radius:8px;padding:8px;background:#fafafa;" />
+  <div style="font-size:0.82em;color:var(--text-muted);margin-top:8px;">
+    Figure: A storyboard illustrating two user stories about RottenPotatoes. 
+    Top: home page. Middle: add new movie. Bottom: movie details page.
+  </div>
+</div>
+
+<!-- Sketch to HTML box -->
+<div class="box box-note" style="margin:20px 0;">
+  <div class="box-title">&#128195; From Sketch to HTML</div>
+  <ol style="margin:8px 0 0 20px;line-height:1.9;">
+    <li>Split the sketch into layout <strong>blocks</strong> — use 
+    <code>&lt;div&gt;</code> elements for obvious sections</li>
+    <li>Implement <strong>structure first</strong>, style later</li>
+    <li>Use a CSS framework like <strong>Bootstrap</strong> to get an acceptable 
+    prototype quickly</li>
+    <li>Add custom CSS only <strong>after everything works</strong></li>
+  </ol>
+</div>
+<!-- ── end Lo-Fi section ─────────────────────────── -->
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 7 — POINTS & VELOCITY
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s7">7. Story Points and Velocity</h1>
+
+  <p>Some stories take 1 hour; others take 2 weeks. Simply counting 'stories completed per iteration' is misleading. The solution is to assign each story an integer number of 
+<strong>story points</strong> reflecting its perceived difficulty and uncertainty.
+</p>
+<p>Velocity is the moving average of the number of story points completed per iteration. It is a more accurate measure of team productivity and helps with forecasting how many iterations are needed to complete the backlog.</p>
+<p><strong>Backlog</strong> is the collection of stories that have been prioritized and point-estimated but not yet started in this iteration. </p>
+
+
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 8 — BEHAVE / ACCEPTANCE TESTS
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s8">8. From User Stories to Acceptance Tests: pytest-bdd</h1>
+
+  <!-- ── Acceptance Tests with pytest-bdd ──────────── -->
+
+<!-- Definition boxes -->
+<div class="box box-note" style="margin:0 0 16px;">
+  <div class="box-title">&#9989; What is an Acceptance Test?</div>
+  <p style="margin:0 0 8px;">An acceptance test in BDD is an <strong>executable 
+  specification</strong> that defines how a software feature should behave from the 
+  user's perspective.</p>
+  <p style="margin:0;">Acceptance tests are written by a <strong>collaboration of 
+  stakeholders and programmers</strong> to define when a requirement is <em>done</em>. 
+  Written in plain language, they bridge the communication gap between business 
+  stakeholders, developers, and QA to ensure the team builds the right business value.</p>
+</div>
+
+<!-- Gherkin syntax -->
+<h2>Gherkin Syntax — Given / When / Then</h2>
+<p>In BDD, acceptance tests are structured using the 
+<strong>Given-When-Then</strong> format, known as <strong>Gherkin syntax</strong>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:15%;">Keyword</th>
+      <th>Role</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code style="color:#4EC9B0;font-weight:700;">Given</code></td>
+      <td>The <strong>initial context</strong> or state of the system</td>
+      <td><em>Given the movie database is empty</em></td>
+    </tr>
+    <tr>
+      <td><code style="color:#DCDCAA;font-weight:700;">When</code></td>
+      <td>The <strong>specific action</strong> or event the user performs</td>
+      <td><em>When I add a movie named "Hamilton"</em></td>
+    </tr>
+    <tr>
+      <td><code style="color:#CE9178;font-weight:700;">Then</code></td>
+      <td>The <strong>expected outcome</strong> or resulting behavior</td>
+      <td><em>Then the movie list should contain "Hamilton"</em></td>
+    </tr>
+    <tr>
+      <td><code style="color:#9CDCFE;font-weight:700;">And / But</code></td>
+      <td>Chains <strong>multiple conditions</strong> under any primary step</td>
+      <td><em>And the movie count should be 1</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:0.9em;color:var(--text-muted);">Every Gherkin document is saved 
+in a <code>.feature</code> file and must contain a single feature with one or more 
+scenarios written in Given-When-Then structure.
+
+</p>
+
+<!-- Feature file example -->
+<h2>Example: RottenPotatoes Feature File</h2>
+
+<div style="margin:16px 0 28px;">
+  <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+              letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+              border-radius:8px 8px 0 0;display:flex;justify-content:space-between;
+              align-items:center;">
+    <span>&#128196; features/add_movie.feature</span>
+    <span style="opacity:0.6;font-size:11px;">Gherkin</span>
+  </div>
+  <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;
+              line-height:2;background:#1E1E1E;">
+<span style="color:#569CD6;font-weight:bold;">Feature:</span> <span style="color:#CE9178;">Add a movie to RottenPotatoes</span>
+  <span style="color:#4EC9B0;">As a</span>      <span style="color:#DCDCAA;">movie fan</span>
+  <span style="color:#4EC9B0;">So that</span>   <span style="color:#DCDCAA;">I can share a movie with other movie fans</span>
+  <span style="color:#4EC9B0;">I want to</span> <span style="color:#DCDCAA;">add a movie to RottenPotatoes database</span>
+
+<span style="color:#569CD6;font-weight:bold;">Scenario:</span> <span style="color:#CE9178;">Add Hamilton movie</span>
+  <span style="color:#4EC9B0;">Given</span> <span style="color:#DCDCAA;">the movie database is empty</span>
+  <span style="color:#4EC9B0;">When</span>  <span style="color:#DCDCAA;">I add a movie named "Hamilton"</span>
+  <span style="color:#4EC9B0;">Then</span>  <span style="color:#DCDCAA;">the movie list should contain "Hamilton"</span></pre>
+</div>
+
+<div class="box box-note" style="margin:0 0 28px;">
+  <div class="box-title">&#128161; From Text to Executable Test</div>
+  <p style="margin:0;">At this point, the scenario is still only text. To execute it, 
+  we need a tool that can <strong>connect the English sentences to Python functions</strong>. 
+  We will use <strong>pytest-bdd</strong>.</p>
+</div>
+
+<!-- Install -->
+<h2>Step-by-Step: pytest-bdd Walkthrough</h2>
+
+<!-- Step 0 — install -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1F4E79;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1F4E79;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">0</span>
+    <span style="color:#fff;font-weight:600;">Install pytest-bdd</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;">
+<span style="color:#4EC9B0;">pip install</span> <span style="color:#CE9178;">pytest pytest-bdd</span></pre>
+  </div>
+</div>
+
+<!-- Step 1 — feature file -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1F4E79;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1F4E79;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">1</span>
+    <span style="color:#fff;font-weight:600;">Save the Gherkin document as a 
+    <code style="background:rgba(255,255,255,0.15);padding:1px 6px;border-radius:3px;
+                 font-size:0.9em;">.feature</code> file</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 10px;">Save the feature file inside a folder named 
+    <code>features</code>:</p>
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;">
+<span style="color:#6A9955;">── features/</span>
+<span style="color:#CE9178;">   └── add_movie.feature</span></pre>
+  </div>
+</div>
+
+<!-- Step 2 — implementation -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1F4E79;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1F4E79;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">2</span>
+    <span style="color:#fff;font-weight:600;">Create the implementation file</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 10px;">File: <code>movies.py</code></p>
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;">
+<span style="color:#9CDCFE;">movies</span> <span style="color:#D4D4D4;">=</span> <span style="color:#D4D4D4;">[]</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">add_movie</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">pass</span></pre>
+    <div class="box box-warn" style="margin:12px 0 0;">
+      <div class="box-title">&#9888;&#65039; Intentional Failure</div>
+      <p style="margin:0;">This function intentionally does nothing. 
+      <strong>We expect the test to fail.</strong> This is the 
+      <em>red</em> step of the Red-Green-Refactor cycle.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3 — step definitions -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1F4E79;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1F4E79;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">3</span>
+    <span style="color:#fff;font-weight:600;">Create step definitions</span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 10px;">File: <code>tests/test_movies.py</code></p>
+    <pre style="margin:0 0 16px;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;">
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">pytest_bdd</span> <span style="color:#569CD6;">import</span> <span style="color:#D4D4D4;">scenarios, given, when, then</span>
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">movies</span> <span style="color:#569CD6;">import</span> <span style="color:#D4D4D4;">movies, add_movie</span>
+
+<span style="color:#DCDCAA;">scenarios</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"../features/add_movie.feature"</span><span style="color:#D4D4D4;">)</span>
+
+<span style="color:#569CD6;">@given</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"the movie database is empty"</span><span style="color:#D4D4D4;">)</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">clear_database</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#9CDCFE;">movies</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">clear</span><span style="color:#D4D4D4;">()</span>
+
+<span style="color:#569CD6;">@when</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">'I add a movie named "Hamilton"'</span><span style="color:#D4D4D4;">)</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">add_hamilton</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#DCDCAA;">add_movie</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"Hamilton"</span><span style="color:#D4D4D4;">)</span>
+
+<span style="color:#569CD6;">@then</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">'the movie list should contain "Hamilton"'</span><span style="color:#D4D4D4;">)</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">verify_movie</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#CE9178;">"Hamilton"</span> <span style="color:#569CD6;">in</span> <span style="color:#9CDCFE;">movies</span></pre>
+
+    <!-- Gherkin ↔ Python mapping -->
+    <div style="background:#F8F6FF;border:1px solid #AFA9EC;border-radius:8px;
+                padding:16px 18px;">
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;
+                  letter-spacing:0.07em;color:#26215C;margin-bottom:12px;">
+        &#128257; Gherkin ↔ Python — Automatic Connection
+      </div>
+      <table style="margin:0;font-size:0.88em;">
+        <thead>
+          <tr>
+            <th>Gherkin sentence</th>
+            <th>Python decorator</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Given the movie database is empty</code></td>
+            <td><code>@given("the movie database is empty")</code></td>
+          </tr>
+          <tr>
+            <td><code>When I add a movie named "Hamilton"</code></td>
+            <td><code>@when('I add a movie named "Hamilton"')</code></td>
+          </tr>
+          <tr>
+            <td><code>Then the movie list should contain "Hamilton"</code></td>
+            <td><code>@then('the movie list should contain "Hamilton"')</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin:10px 0 0;font-size:0.88em;color:var(--text-muted);">
+        pytest-BDD <strong>automatically connects</strong> each Gherkin sentence 
+        to its matching Python function.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Step 4 — run failing test -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1F4E79;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1F4E79;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">4</span>
+    <span style="color:#fff;font-weight:600;">Run the test — expect it to 
+    <span style="color:#F48FB1;">FAIL</span></span>
+  </div>
+  <div style="padding:16px 18px;">
+    <pre style="margin:0 0 12px;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;">
+<span style="color:#4EC9B0;">python</span> <span style="color:#CE9178;">-m pytest -v</span></pre>
+    <p style="margin:0 0 8px;">Expected output:</p>
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;">
+<span style="color:#F44747;">FAILED</span>
+<span style="color:#CE9178;">assert 'Hamilton' in []</span></pre>
+    <div class="box box-warn" style="margin:12px 0 0;">
+      <div class="box-title">&#10060; Why did it fail?</div>
+      <p style="margin:0;">Because <code>add_movie()</code> contains only 
+      <code>pass</code> — the movie was never actually added to the list.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Step 5 — fix and pass -->
+<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 20px;">
+  <div style="background:#1B5E20;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#1B5E20;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;">5</span>
+    <span style="color:#fff;font-weight:600;">Fix the implementation — watch it 
+    <span style="color:#A5D6A7;">PASS</span></span>
+  </div>
+  <div style="padding:16px 18px;">
+    <p style="margin:0 0 10px;">Modify <code>movies.py</code>:</p>
+    <pre style="margin:0 0 12px;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;">
+<span style="color:#9CDCFE;">movies</span> <span style="color:#D4D4D4;">=</span> <span style="color:#D4D4D4;">[]</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">add_movie</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#9CDCFE;">movies</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">append</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">)</span></pre>
+    <p style="margin:0 0 8px;">Now run again:</p>
+    <pre style="margin:0 0 12px;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;">
+<span style="color:#4EC9B0;">python</span> <span style="color:#CE9178;">-m pytest -v</span></pre>
+    <p style="margin:0 0 8px;">Expected output:</p>
+    <pre style="margin:0;border-radius:6px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;">
+<span style="color:#4EC9B0;">PASSED</span></pre>
+    <div class="box box-green" style="margin:12px 0 0;">
+      <div class="box-title">&#10004;&#65039; Requirement Satisfied</div>
+      <p style="margin:0;">The requirement has now been satisfied. The Gherkin scenario 
+      that the stakeholder can read is <strong>also</strong> the test that the machine 
+      executes — this is the core idea of BDD.</p>
+    </div>
+  </div>
+</div>
+<!-- ── end Acceptance Tests section ──────────────── -->
+
+
+  <hr class="divider" />
+
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 9 — PROS AND CONS
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s9">9. Pros and Cons of BDD</h1>
+
+  <!-- ── Pros and Cons of BDD ──────────────────────── -->
+
+<h2>Advantages of BDD</h2>
+
+<p>The advantage of user stories and BDD is creating a <strong>common language shared
+by all stakeholders</strong>, especially the nontechnical customers. BDD is perfect for
+projects where the requirements are <strong>poorly understood or rapidly changing</strong>,
+which is often the case. User stories also make it easy to break projects into small
+increments or iterations, which makes it easier to estimate how much work remains.</p>
+
+<p>The use of 3×5 cards and paper mockups keeps nontechnical customers involved in the
+design and prioritization of features, which increases the chances of the software meeting
+the customer's needs. Iterations drive the refinement of this process. Moreover, BDD
+naturally leads to <strong>writing tests before coding</strong>, shifting the validation
+and development effort from debugging to testing.</p>
+
+<!-- BDD roles box -->
+<div class="box box-note" style="margin:20px 0;">
+  <div class="box-title">&#127919; BDD Plays Many Important Roles in the Agile Process</div>
+  <p style="margin:0 0 10px;">Comparing user stories, pytest-bdd, points, and velocity
+  to plan-and-document processes makes it clear that BDD covers:</p>
+  <ol style="margin:0 0 0 20px;line-height:1.9;">
+    <li>Requirements elicitation</li>
+    <li>Requirements documentation</li>
+    <li>Acceptance tests</li>
+    <li>Traceability between features and implementation</li>
+    <li>Scheduling and monitoring of project progress</li>
+  </ol>
+</div>
+
+<h2>Disadvantages of BDD</h2>
+
+<div class="box box-warn" style="margin:20px 0;">
+  <div class="box-title">&#9888;&#65039; Limitations to Be Aware Of</div>
+  <ul style="margin:6px 0 0 20px;line-height:1.9;">
+    <li>It may be <strong>difficult or too expensive</strong> to maintain continuous
+    customer contact throughout development — some customers may not want to
+    participate.</li>
+    <li>BDD may <strong>not scale</strong> to very large software projects or to
+    safety-critical applications. Plan-and-document is often a better match in
+    both situations.</li>
+    <li>A project could <strong>satisfy customers but produce a poor software
+    architecture</strong>, which is an important foundation for maintaining the
+    code. Recognizing design patterns and refactoring when necessary reduces
+    this risk.</li>
+  </ul>
+</div>
+
+<!-- Closing note -->
+<div class="box box-green" style="margin:20px 0;">
+  <div class="box-title">&#128161; Final Word</div>
+  <p style="margin:0;">BDD may not initially seem like the natural way to develop
+  software — the strong temptation is to just start hacking code. However, once
+  you have learned BDD and had success at it, <strong>for most developers there
+  is no going back</strong>.</p>
+</div>
+<!-- ── end Pros and Cons of BDD ──────────────────── --
+
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       MIDTERM QUESTION BANK — MODULE 2
+       ═══════════════════════════════════════════════════════ -->
+  <hr style="border:none;border-top:3px solid var(--blue-dark);margin:60px 0 40px;">
+
+  <div style="background:var(--blue-dark);color:#fff;border-radius:10px;
+              padding:20px 28px;margin:0 0 32px;">
+    <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;
+                text-transform:uppercase;opacity:0.7;margin-bottom:4px;">
+      CSE 3225 Software Engineering
+    </div>
+    <div style="font-size:1.6rem;font-weight:800;line-height:1.2;">
+      Module 2 &mdash; Question Bank
+    </div>
+    <div style="font-size:0.9rem;opacity:0.8;margin-top:6px;">
+      15 Questions &nbsp;|&nbsp; Descriptive &middot; Conceptual &middot; Analytical &middot; Coding
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin:0 0 32px;">
+    <span style="background:#E6F1FB;border:1px solid #85B7EB;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#0C447C;">
+      &#128221; Descriptive
+    </span>
+    <span style="background:#E1F5EE;border:1px solid #5DCAA5;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#085041;">
+      &#128161; Conceptual
+    </span>
+    <span style="background:#EEEDFE;border:1px solid #AFA9EC;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#26215C;">
+      &#128202; Analytical
+    </span>
+    <span style="background:#FAEEDA;border:1px solid #EF9F27;border-radius:20px;
+                 padding:4px 14px;font-size:12px;font-weight:600;color:#412402;">
+      &#128187; Coding / Applied
+    </span>
+  </div>
+
+  <!-- ─── Q1 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#0C447C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#0C447C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">1</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Define Behavior-Driven Design (BDD) and explain how it differs from the Plan-and-Document approach to requirements.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--blue-med);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--blue-med);">
+          <p style="margin:0 0 8px;"><strong>BDD (Behavior-Driven Design)</strong> asks questions about the behavior of an application before and during development so that stakeholders are less likely to miscommunicate. Unlike Plan-and-Document, requirements in BDD are <strong>continuously refined</strong> rather than fixed upfront.</p>
+          <table style="margin:8px 0 0;">
+            <thead><tr><th>Dimension</th><th>Plan-and-Document</th><th>BDD / Agile</th></tr></thead>
+            <tbody>
+              <tr><td>Requirements elicitation</td><td>Interviewing, scenarios, use cases</td><td>User stories</td></tr>
+              <tr><td>Requirements documentation</td><td>Software Requirements Specification (SRS)</td><td>User stories + acceptance tests</td></tr>
+              <tr><td>Requirements fulfillment</td><td>Requirements traceability</td><td>Executable acceptance tests</td></tr>
+              <tr><td>Refinement</td><td>Fixed at start</td><td>Continuously refined</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q2 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#0C447C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#0C447C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">2</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Write a user story in the Connextra format for the following scenario: A student wants to view their assignment grades on an online university portal.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Applied</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--blue-med);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--blue-med);">
+          <p style="margin:0 0 8px;">The Connextra format is: <strong>Feature name / As a [stakeholder] / So that [goal] / I want to [task]</strong></p>
+          <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;
+                      font-family:'Courier New',monospace;font-size:13px;color:#D4D4D4;line-height:1.8;">
+            Feature: View assignment grades<br>
+            &nbsp;&nbsp;As a student<br>
+            &nbsp;&nbsp;So that I can track my academic progress<br>
+            &nbsp;&nbsp;I want to view my grades for all submitted assignments on the university portal
+          </div>
+          <p style="margin:8px 0 0;font-size:0.9em;color:var(--text-muted);">All three clauses (As a, So that, I want to) must be present. The stakeholder is identified, the business goal is clear, and the task is specific.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q3 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#0C447C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#0C447C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">3</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Explain the SMART acronym for user stories. For each letter, give a brief description and state whether the following user story violates it: &ldquo;The app should be fast.&rdquo;</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--blue-med);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--blue-med);">
+          <table style="margin:0;">
+            <thead><tr><th>Letter</th><th>Meaning</th><th>Does &ldquo;app should be fast&rdquo; violate it?</th></tr></thead>
+            <tbody>
+              <tr><td><strong>S</strong> &mdash; Specific</td><td>Clearly identifies what feature is needed</td><td>&#10060; Yes &mdash; &ldquo;fast&rdquo; is not specific</td></tr>
+              <tr><td><strong>M</strong> &mdash; Measurable</td><td>Testable with known expected results</td><td>&#10060; Yes &mdash; cannot be tested without a number</td></tr>
+              <tr><td><strong>A</strong> &mdash; Achievable</td><td>Implementable in one iteration</td><td>&#10060; Yes &mdash; undefined scope, impossible to size</td></tr>
+              <tr><td><strong>R</strong> &mdash; Relevant</td><td>Has business value to a stakeholder</td><td>&#9989; Maybe &mdash; depends on context</td></tr>
+              <tr><td><strong>T</strong> &mdash; Timeboxed</td><td>Can be stopped at the time budget</td><td>&#10060; Yes &mdash; no defined boundary to stop at</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:10px 0 0;"><strong>Better version:</strong> &ldquo;When adding a movie, 99% of Add Movie pages should appear within 3 seconds.&rdquo;</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q4 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">4</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Describe the &ldquo;Five Whys&rdquo; technique. Using the lecture's theater example, explain what business value was ultimately uncovered.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;">The <strong>Five Whys</strong> is a technique to drill down to the real business value of a user story by recursively asking &ldquo;Why?&rdquo; until the root business motivation is found.</p>
+          <p style="margin:0 0 4px;">Using the theater Facebook feature example from the lecture:</p>
+          <ol style="margin:0 0 8px 20px;line-height:1.8;">
+            <li>Why add Facebook? &rarr; More people will go with friends and enjoy the show more.</li>
+            <li>Why does enjoyment matter? &rarr; We will sell more tickets.</li>
+            <li>Why sell more tickets? &rarr; The theater makes more money.</li>
+            <li>Why make more money? &rarr; To not go out of business.</li>
+            <li>Why stay in business? &rarr; I have a job.</li>
+          </ol>
+          <p style="margin:0;">The true business value is <strong>job security and organizational survival</strong> &mdash; far more fundamental than a Facebook feature. This technique prevents building features that don't serve real needs.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q5 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">5</span>
+      <span style="color:#fff;font-weight:600;flex:1;">What is a Minimum Viable Product (MVP)? How does it relate to the R (Relevant) criterion in SMART?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;">The <strong>Minimum Viable Product (MVP)</strong> is a subset of the full set of features that, when completed together, creates a product with real business value in the marketplace. It is not a single feature but the <em>combination</em> of features that makes the product viable enough to ship and sell.</p>
+          <p style="margin:0;">Its connection to <strong>R (Relevant)</strong>: the MVP concept expands upon Relevance. Individual stories must each have business value (Relevant), but collectively the stories that form the MVP must make the product viable in the real world. You cannot start selling a product that is only partially built, so MVP stories should be prioritized first in the backlog to enable shipping.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q6 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#085041;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#085041;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">6</span>
+      <span style="color:#fff;font-weight:600;flex:1;">What are Lo-Fi UI sketches? Why does the lecture recommend using paper and pencil rather than digital tools for early UI prototyping? List three specific advantages mentioned.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:var(--teal);list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--teal);">
+          <p style="margin:0 0 8px;"><strong>Lo-Fi (Low-Fidelity) UI sketches</strong> are rough, paper-based mockups of user interfaces, created using kindergarten tools such as paper, pencil, crayons, and scissors. They represent the UI equivalent of 3&times;5 user story cards.</p>
+          <p style="margin:0 0 4px;">Three advantages from the lecture:</p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li><strong>Non-threatening:</strong> No one hesitates to cross out or modify a pencil sketch, encouraging honest feedback from non-technical stakeholders.</li>
+            <li><strong>Easy to discard:</strong> Takes minutes to create and discard, not hours of CSS code, making it cheap to experiment.</li>
+            <li><strong>Inclusive:</strong> No technical skill is needed to participate, so all stakeholders can be actively involved in the design process.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q7 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">7</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Explain the difference between a lo-fi sketch and a storyboard. Why is a storyboard necessary in addition to individual sketches?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;">A <strong>lo-fi sketch</strong> shows what the UI looks like at <em>one instant in time</em> &mdash; a static snapshot of a single screen.</p>
+          <p style="margin:0 0 8px;">A <strong>storyboard</strong> shows how multiple screens flow together as a user interacts with the application over time &mdash; like a comic strip of the user journey. It is typically a tree or graph of screens driven by different user choices, and must capture pages, forms, buttons, and popups.</p>
+          <p style="margin:0;">A storyboard is necessary because web applications are inherently dynamic &mdash; clicking a button leads to a different screen, submitting a form changes state. Without a storyboard, the team and stakeholders can agree on individual screens but miss disagreements about how the screens connect. The lecture notes that you must agree on not only the content of Lo-Fi sketches but on what happens when users interact with each page.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q8 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">8</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Define story points and velocity. A team completed 12, 15, 10, and 13 story points over four iterations. What is their velocity? If they have 80 story points remaining in their backlog, how many more iterations do they need?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Calculation</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;"><strong>Story points</strong> are integer values assigned to each user story reflecting perceived difficulty and uncertainty. <strong>Velocity</strong> is the moving average of story points completed per iteration &mdash; a measure of team productivity used for forecasting.</p>
+          <p style="margin:0 0 4px;"><strong>Calculation:</strong></p>
+          <ul style="margin:0 0 8px 20px;line-height:1.8;">
+            <li>Total points: 12 + 15 + 10 + 13 = <strong>50</strong></li>
+            <li>Velocity (average) = 50 &divide; 4 = <strong>12.5 points per iteration</strong></li>
+            <li>Remaining backlog: <strong>80 points</strong></li>
+            <li>Iterations needed: 80 &divide; 12.5 = <strong>6.4 &rarr; approximately 7 iterations</strong></li>
+          </ul>
+          <p style="margin:0;font-size:0.9em;color:var(--text-muted);">The backlog is the collection of stories that have been prioritized and point-estimated but not yet started. Velocity allows the team to forecast completion without fixing a deadline.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q9 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">9</span>
+      <span style="color:#fff;font-weight:600;flex:1;">What is an acceptance test in BDD? How does it differ from a unit test? Why is it important that acceptance tests are written collaboratively by stakeholders and programmers?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128161; Conceptual</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;">An <strong>acceptance test</strong> in BDD is an <em>executable specification</em> that defines how a software feature should behave from the user's perspective. It is written in plain language (Gherkin Given/When/Then) and bridges the gap between business stakeholders, developers, and QA.</p>
+          <p style="margin:0 0 8px;">Key difference from unit tests: a unit test checks a single method or function from a technical/developer perspective. An acceptance test checks an entire user-visible feature from the stakeholder's perspective, using natural language that non-technical people can read and validate.</p>
+          <p style="margin:0;">Collaborative authorship is important because it ensures that both sides agree on what &ldquo;done&rdquo; means. Stakeholders confirm that the test reflects their real intent; programmers confirm it is technically testable. A test written by only one side risks missing the other's perspective &mdash; building something technically correct but not what was wanted, or wanting something that cannot be implemented as described.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q10 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#26215C;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#26215C;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">10</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Explain the Given/When/Then (Gherkin) syntax. What does each keyword represent? Why is every Gherkin document saved as a .feature file?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128221; Descriptive</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#26215C;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #26215C;">
+          <p style="margin:0 0 8px;">Gherkin is a structured plain-language format used in BDD acceptance tests. Each keyword has a distinct role:</p>
+          <table style="margin:0 0 10px;">
+            <thead><tr><th>Keyword</th><th>Role</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Given</strong></td><td>Initial context or state of the system</td><td>Given the movie database is empty</td></tr>
+              <tr><td><strong>When</strong></td><td>The specific action the user performs</td><td>When I add a movie named &ldquo;Hamilton&rdquo;</td></tr>
+              <tr><td><strong>Then</strong></td><td>The expected outcome or behavior</td><td>Then the movie list should contain &ldquo;Hamilton&rdquo;</td></tr>
+              <tr><td><strong>And / But</strong></td><td>Chains multiple conditions under any primary step</td><td>And the movie count should be 1</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:0;">Gherkin documents are saved as <code>.feature</code> files because each file must contain a single feature with one or more scenarios. The <code>.feature</code> extension signals to tools like pytest-bdd that the file should be parsed as Gherkin and connected to Python step definitions.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q11 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#412402;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#412402;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">11</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Write a complete Gherkin <code>.feature</code> file for the following scenario: A university student logs into the student portal. If login succeeds, they should be redirected to the dashboard. If login fails (wrong password), they should see an error message.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Coding</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#412402;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #412402;">
+          <div style="background:#1E1E1E;border-radius:6px;padding:14px 18px;
+                      font-family:'Courier New',monospace;font-size:13px;color:#D4D4D4;line-height:1.9;">
+            <span style="color:#569CD6;font-weight:bold;">Feature:</span> <span style="color:#CE9178;">Student portal login</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">As a</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">university student</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">So that</span>&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">I can access my academic information</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">I want to</span>&nbsp;<span style="color:#DCDCAA;">log into the student portal securely</span><br>
+            <br>
+            &nbsp;&nbsp;<span style="color:#569CD6;font-weight:bold;">Scenario:</span> <span style="color:#CE9178;">Successful login</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Given</span> <span style="color:#DCDCAA;">I am on the student portal login page</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">When</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">I enter a valid student ID and correct password</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">And</span>&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">I click the Login button</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Then</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">I should be redirected to the student dashboard</span><br>
+            <br>
+            &nbsp;&nbsp;<span style="color:#569CD6;font-weight:bold;">Scenario:</span> <span style="color:#CE9178;">Failed login with wrong password</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Given</span> <span style="color:#DCDCAA;">I am on the student portal login page</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">When</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">I enter a valid student ID and an incorrect password</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">And</span>&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">I click the Login button</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Then</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">I should see the error message &quot;Invalid credentials. Please try again.&quot;</span>
+          </div>
+          <p style="margin:10px 0 0;font-size:0.9em;color:var(--text-muted);">The feature covers both the happy path (success) and the sad path (failure) &mdash; both are required for a complete feature as noted in the lecture.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q12 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#412402;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#412402;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">12</span>
+      <span style="color:#fff;font-weight:600;flex:1;">The following pytest-bdd step definition is missing its implementation body. Complete it so that it correctly clears the movies list and adds the given movie. Explain each line you write.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128187; Coding</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;
+                  font-family:'Courier New',monospace;font-size:13px;color:#D4D4D4;line-height:1.8;margin:0 0 12px;">
+        <span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">pytest_bdd</span> <span style="color:#569CD6;">import</span> given, when, then<br>
+        <span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">movies</span> <span style="color:#569CD6;">import</span> movies, add_movie<br><br>
+        <span style="color:#569CD6;">@given</span>(<span style="color:#CE9178;">&quot;the movie database is empty&quot;</span>)<br>
+        <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">clear_database</span>():<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6A9955;"># ??? complete this</span><br><br>
+        <span style="color:#569CD6;">@when</span>(<span style="color:#CE9178;">'I add a movie named &quot;Hamilton&quot;'</span>)<br>
+        <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">add_hamilton</span>():<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6A9955;"># ??? complete this</span>
+      </div>
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#412402;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #412402;">
+          <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;
+                      font-family:'Courier New',monospace;font-size:13px;color:#D4D4D4;line-height:1.8;margin:0 0 10px;">
+            <span style="color:#569CD6;">@given</span>(<span style="color:#CE9178;">&quot;the movie database is empty&quot;</span>)<br>
+            <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">clear_database</span>():<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#9CDCFE;">movies</span>.<span style="color:#DCDCAA;">clear</span>()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6A9955;"># removes all items from the movies list</span><br><br>
+            <span style="color:#569CD6;">@when</span>(<span style="color:#CE9178;">'I add a movie named &quot;Hamilton&quot;'</span>)<br>
+            <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">add_hamilton</span>():<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">add_movie</span>(<span style="color:#CE9178;">&quot;Hamilton&quot;</span>)&nbsp;&nbsp;&nbsp;<span style="color:#6A9955;"># calls the add_movie function with the title</span>
+          </div>
+          <p style="margin:0;"><strong>Explanation:</strong> <code>movies.clear()</code> empties the list so each test starts from a known empty state (making the test Independent and Repeatable). <code>add_movie(&quot;Hamilton&quot;)</code> invokes the function under test. pytest-bdd automatically matches each <code>@given</code>/<code>@when</code>/<code>@then</code> decorator string to the corresponding Gherkin line in the <code>.feature</code> file.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q13 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#880E4F;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#880E4F;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">13</span>
+      <span style="color:#fff;font-weight:600;flex:1;">Chad Fowler states: &ldquo;The pattern is: probabilistic inside, deterministic at the edges.&rdquo; In the context of AI-assisted software development, explain what this means and how BDD acceptance tests serve as the &ldquo;deterministic edges.&rdquo;</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#880E4F;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #880E4F;">
+          <p style="margin:0 0 8px;">Fowler's quote from the lecture, from his essay &ldquo;Relocating Rigor,&rdquo; means:</p>
+          <ul style="margin:0 0 8px 20px;line-height:1.8;">
+            <li><strong>Probabilistic inside:</strong> The AI model that generates code is a probabilistic system &mdash; it does not guarantee correct output. Given the same prompt, it may produce different code on different runs, and any given output may contain errors.</li>
+            <li><strong>Deterministic at the edges:</strong> The <em>tests</em> that validate whether the code is correct must be deterministic &mdash; they must pass or fail with a clear binary result, regardless of how the code inside was produced.</li>
+          </ul>
+          <p style="margin:0;">BDD acceptance tests serve as the &ldquo;deterministic edges&rdquo; because a Gherkin scenario has a fixed, agreed-upon outcome: Given a certain state, When a user performs an action, Then a specific, measurable thing must happen. The test does not care whether a human or an AI produced the implementation &mdash; it only cares whether the behavior is correct. This is why the lecture emphasizes that BDD's role has increased in importance, not decreased, in the AI era.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q14 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#880E4F;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#880E4F;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">14</span>
+      <span style="color:#fff;font-weight:600;flex:1;">The lecture describes the Thoughtworks February 2026 retreat finding that &ldquo;engineering quality migrates&rdquo; when AI writes code. Analyse what this means: where does quality migrate from, where does it migrate to, and what implications does this have for how software engineers should spend their time?</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#880E4F;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #880E4F;">
+          <p style="margin:0 0 8px;">According to the Thoughtworks 2026 retreat findings cited in the lecture:</p>
+          <p style="margin:0 0 4px;"><strong>Migration from:</strong> The act of <em>writing code</em> itself. Traditionally, quality was ensured through careful coding by skilled developers. When AI generates the code, this locus of control is lost.</p>
+          <p style="margin:0 0 8px;"><strong>Migration to:</strong> Four new areas &mdash; <strong>Specs</strong> (precise requirements), <strong>Tests</strong> (executable acceptance and unit tests), <strong>Constraints</strong> (boundaries and rules the AI must follow), and <strong>Risk management</strong> (identifying what can go wrong).</p>
+          <p style="margin:0 0 8px;"><strong>Implications for time allocation:</strong></p>
+          <ol style="margin:0 0 0 20px;line-height:1.8;">
+            <li>Engineers should invest more time in writing clear, precise specifications before prompting AI &mdash; because a bad plan scales into a codebase full of errors.</li>
+            <li>Writing comprehensive acceptance tests (BDD scenarios) becomes more critical, as they are the only deterministic check on probabilistic AI output.</li>
+            <li>Time previously spent on typing syntax should shift to reviewing AI output, validating correctness, and understanding the system architecture &mdash; skills that AI currently lacks.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ─── Q15 ─────────────────────────────────────────────── -->
+  <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:0 0 24px;">
+    <div style="background:#880E4F;padding:10px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="background:#fff;color:#880E4F;font-weight:800;font-size:0.9rem;
+                   width:32px;height:32px;border-radius:50%;display:inline-flex;
+                   align-items:center;justify-content:center;flex-shrink:0;">15</span>
+      <span style="color:#fff;font-weight:600;flex:1;">A product manager gives you the following user story: &ldquo;As a user, I want the app to be better.&rdquo; (a) Identify which SMART criteria this violates and why. (b) Apply the Five Whys to uncover a plausible real business need. (c) Rewrite it as one SMART user story in Connextra format with one Gherkin acceptance test scenario.</span>
+      <span style="background:rgba(255,255,255,0.15);color:#fff;border-radius:20px;
+                   padding:2px 10px;font-size:11px;font-weight:600;">&#128202; Analytical + &#128187; Coding</span>
+    </div>
+    <div style="padding:16px 20px;">
+      <details>
+        <summary style="cursor:pointer;font-weight:600;color:#880E4F;list-style:none;padding:6px 0;">&#9654; Show Sample Answer</summary>
+        <div style="margin-top:12px;padding:14px 16px;background:var(--gray-light);border-radius:8px;border-left:4px solid #880E4F;">
+          <p style="margin:0 0 6px;"><strong>(a) SMART violations:</strong></p>
+          <ul style="margin:0 0 10px 20px;line-height:1.8;">
+            <li><strong>S &mdash; Not Specific:</strong> &ldquo;Better&rdquo; is undefined.</li>
+            <li><strong>M &mdash; Not Measurable:</strong> There is no numeric or testable criterion for &ldquo;better.&rdquo;</li>
+            <li><strong>A &mdash; Not Achievable:</strong> Cannot be scoped to one iteration with no definition.</li>
+            <li><strong>T &mdash; Not Timeboxed:</strong> No clear boundary at which to stop.</li>
+          </ul>
+          <p style="margin:0 0 6px;"><strong>(b) Five Whys (example):</strong></p>
+          <ol style="margin:0 0 10px 20px;line-height:1.8;">
+            <li>Why &ldquo;better&rdquo;? &rarr; Users are complaining it's slow.</li>
+            <li>Why does slowness matter? &rarr; Users abandon the app mid-task.</li>
+            <li>Why is abandonment a problem? &rarr; We lose conversions and revenue.</li>
+            <li>Why do we need revenue? &rarr; To stay in business.</li>
+            <li>Why stay in business? &rarr; To serve our users and keep our jobs.</li>
+          </ol>
+          <p style="margin:0 0 6px;"><strong>(c) SMART Connextra user story + Gherkin scenario:</strong></p>
+          <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;
+                      font-family:'Courier New',monospace;font-size:13px;color:#D4D4D4;line-height:1.8;">
+            <span style="color:#569CD6;font-weight:bold;">Feature:</span> <span style="color:#CE9178;">Fast search results</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">As a</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">registered user</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">So that</span>&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">I don't abandon the app due to slow loading</span><br>
+            &nbsp;&nbsp;<span style="color:#4EC9B0;">I want to</span>&nbsp;<span style="color:#DCDCAA;">receive search results within 2 seconds</span><br>
+            <br>
+            &nbsp;&nbsp;<span style="color:#569CD6;font-weight:bold;">Scenario:</span> <span style="color:#CE9178;">Search results load within 2 seconds</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Given</span> <span style="color:#DCDCAA;">I am logged in and on the search page</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">When</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">I enter a search term and press Enter</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">Then</span>&nbsp;&nbsp;<span style="color:#DCDCAA;">search results should appear within 2 seconds</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4EC9B0;">And</span>&nbsp;&nbsp;&nbsp;<span style="color:#DCDCAA;">at least one result should be displayed</span>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</body>
+</html>

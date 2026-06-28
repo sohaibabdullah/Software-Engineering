@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3 — Test-Driven Development</title>
+  <style>
+
+    /* ─── Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-dark:    #1F4E79;
+      --blue-med:     #2E75B6;
+      --blue-light:   #D6E4F0;
+      --teal:         #006064;
+      --teal-light:   #E0F7FA;
+      --amber:        #7B4F00;
+      --amber-light:  #FFF8E1;
+      --green-dark:   #1B5E20;
+      --green-light:  #E8F5E9;
+      --gray-light:   #F5F5F5;
+      --text:         #1A1A2E;
+      --text-muted:   #555;
+      --border:       #DDD;
+      --page-bg:      #FFFFFF;
+      --font:         'Segoe UI', Arial, sans-serif;
+      --font-mono:    'Courier New', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--page-bg);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 48px 80px;
+    }
+
+    /* ─── Typography ───────────────────────────────────────────── */
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      border-bottom: 3px solid var(--blue-med);
+      padding-bottom: 8px;
+      margin: 48px 0 18px;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--blue-med);
+      margin: 36px 0 12px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 24px 0 8px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    a { color: var(--blue-med); }
+
+    strong { font-weight: 700; }
+    em     { font-style: italic; }
+
+    /* ─── Lists ────────────────────────────────────────────────── */
+    ul, ol {
+      margin: 8px 0 16px 24px;
+    }
+    li { margin-bottom: 6px; }
+
+    /* ─── Code ─────────────────────────────────────────────────── */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: #F0F0F0;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: #1E1E1E;
+      color: #D4D4D4;
+      padding: 18px 20px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      line-height: 1.6;
+    }
+
+    /* ─── Tables ───────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.93em;
+    }
+    th {
+      background: var(--blue-dark);
+      color: #FFF;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #F8F8F8; }
+
+    /* ─── Callout boxes ────────────────────────────────────────── */
+    .box {
+      border-left: 5px solid var(--teal);
+      background: var(--teal-light);
+      border-radius: 0 6px 6px 0;
+      padding: 14px 18px;
+      margin: 20px 0;
+    }
+    .box-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--teal);
+    }
+
+    .box-ai {
+      border-left-color: var(--amber);
+      background: var(--amber-light);
+    }
+    .box-ai .box-title { color: var(--amber); }
+
+    .box-warn {
+      border-left-color: #C62828;
+      background: #FFEBEE;
+    }
+    .box-warn .box-title { color: #C62828; }
+
+    .box-note {
+      border-left-color: var(--blue-med);
+      background: var(--blue-light);
+    }
+    .box-note .box-title { color: var(--blue-dark); }
+
+    .box-green {
+      border-left-color: var(--green-dark);
+      background: var(--green-light);
+    }
+    .box-green .box-title { color: var(--green-dark); }
+
+    /* ─── Page header / cover ──────────────────────────────────── */
+    .cover {
+      text-align: center;
+      padding: 48px 0 32px;
+      border-bottom: 2px solid var(--blue-light);
+      margin-bottom: 12px;
+    }
+    .cover-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--blue-dark);
+      line-height: 1.2;
+    }
+    .cover-subtitle {
+      font-size: 1.1rem;
+      color: var(--blue-med);
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .cover-meta-item {
+      background: var(--blue-dark);
+      color: #FFF;
+      border-radius: 8px;
+      padding: 10px 24px;
+      min-width: 160px;
+      text-align: center;
+    }
+    .cover-meta-item .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    .cover-meta-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ─── TOC ──────────────────────────────────────────────────── */
+    .toc {
+      background: var(--gray-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 28px;
+      margin: 32px 0 40px;
+    }
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    .toc ol { margin: 0 0 0 18px; }
+    .toc li { margin-bottom: 4px; font-size: 0.95em; }
+    .toc a { text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ─── Section divider ──────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+
+    /* ─── Self-check / exercise block ─────────────────────────── */
+    .exercise {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      background: #FAFAFA;
+    }
+    .exercise-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    /* ─── Quote card (generic) ─────────────────────────────────── */
+    .quote-card {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0 32px;
+    }
+    .quote-img-col {
+      flex: 0 0 190px;
+      overflow: hidden;
+      background: var(--gray-light);
+    }
+    .quote-img-col img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .quote-col {
+      flex: 1;
+      background: var(--page-bg);
+      padding: 24px 26px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 3px solid var(--blue-dark);
+    }
+    .quote-mark {
+      font-size: 52px;
+      line-height: 1;
+      color: var(--blue-med);
+      font-family: Georgia, serif;
+      margin-bottom: -6px;
+    }
+    .quote-text {
+      font-size: 14px;
+      line-height: 1.75;
+      font-style: italic;
+      color: var(--text);
+      font-family: Georgia, serif;
+      margin: 0 0 12px;
+    }
+    .quote-meta {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+    .quote-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .quote-role {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .quote-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      text-decoration: none;
+      border: 1px solid var(--blue-light);
+      background: var(--blue-light);
+      border-radius: 4px;
+      padding: 3px 9px;
+      color: var(--blue-dark);
+    }
+    .quote-source:hover { background: var(--blue-med); color: #fff; }
+
+    /* ─── Numbered step blocks (matching ch7 style) ────────────── */
+    .step-block {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 0 0 20px;
+    }
+    .step-header {
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-num {
+      background: #fff;
+      font-weight: 800;
+      font-size: 0.9rem;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-title { color: #fff; font-weight: 600; }
+    .step-body { padding: 16px 18px; }
+
+    /* ─── Pills row ────────────────────────────────────────────── */
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 28px;
+    }
+    .pill-card {
+      border-radius: 8px;
+      padding: 12px 18px;
+      flex: 1;
+      min-width: 110px;
+      text-align: center;
+    }
+    .pill-letter { font-size: 1.4rem; font-weight: 800; }
+    .pill-label  { font-size: 0.85rem; font-weight: 600; }
+
+    /* ─── Print ────────────────────────────────────────────────── */
+    @media print {
+      body { max-width: 100%; padding: 20px 30px; }
+      h1 { page-break-before: always; }
+      h1:first-of-type { page-break-before: avoid; }
+      pre, .box, table { page-break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       COVER
+       ═══════════════════════════════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-title">Module 3: Test-Driven Development</div>
+    <div class="cover-subtitle">Red&ndash;Green&ndash;Refactor, Test Doubles, Coverage &amp; Levels of Testing</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Course</div>
+        <div class="value">Software Engineering</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Textbook</div>
+        <div class="value">Fox &amp; Patterson (ESaaS)</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Language</div>
+        <div class="value">Python (pytest)</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       TABLE OF CONTENTS
+       ═══════════════════════════════════════════════════════ -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">FIRST, TDD, and Red&ndash;Green&ndash;Refactor</a></li>
+      <li><a href="#s2">Anatomy of a Test Case: Arrange, Act, Assert</a></li>
+      <li><a href="#s3">Isolating Code: Doubles and Seams</a></li>
+      <li><a href="#s4">Stubbing the Internet</a></li>
+      <li><a href="#s5">Fixtures and Factories</a></li>
+      <li><a href="#s6">Coverage Concepts and Types of Tests</a></li>
+      <li><a href="#s7">Other Testing Approaches and Terminology</a></li>
+      <li><a href="#s8">The Plan-and-Document Perspective on Testing</a></li>
+      <li><a href="#s9">Fallacies and Pitfalls</a></li>
+    </ol>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — FIRST, TDD, RED-GREEN-REFACTOR
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s1">1. FIRST, TDD, and Red&ndash;Green&ndash;Refactor</h1>
+
+  <!-- Quote card: Maurice Wilkes -->
+  <div class="quote-card">
+    <div class="quote-img-col">
+      <img src="maurice_wilkes.jpg" alt="Portrait of Sir Maurice Wilkes" />
+    </div>
+    <div class="quote-col">
+      <div>
+        <div class="quote-mark">&ldquo;</div>
+        <p class="quote-text">
+          It was on one of my journeys between the EDSAC room and the punching
+          equipment that&hellip; the realization came over me with full force that a good
+          part of the remainder of my life was going to be spent finding errors in my
+          own programs.
+        </p>
+      </div>
+      <div class="quote-meta">
+        <div class="quote-name">Sir Maurice Wilkes (1913&ndash;2010)</div>
+        <div class="quote-role">
+          1967 Turing Award winner &mdash; designed and built EDSAC in 1949,
+          one of the first stored-program computers
+        </div>
+        <span class="quote-source">&#128218; Memoirs of a Computer Pioneer, 1985</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>1.1 From Validation to Verification</h2>
+
+  <p>Module 2 distinguished two aspects of software assurance:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:50%">Validation</th>
+        <th style="width:50%">Verification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><em>"Did you build the <strong>right</strong> thing?"</em></td>
+        <td><em>"Did you build the thing <strong>right</strong>?"</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>This module focuses on <strong>verification</strong> &mdash; building the thing right
+  &mdash; via <strong>software testing</strong> as part of the Agile lifecycle. Although
+  testing is only one verification technique, we focus on it because its role is often
+  misunderstood, and as a result it doesn't get as much attention as other parts of the
+  software lifecycle.</p>
+
+  <div class="box box-green">
+    <div class="box-title">&#128161; Key Insight</div>
+    <p style="margin:0;">Approaching software construction from a <strong>test-centric
+    perspective</strong> often improves the software's readability and maintainability.
+    In other words, <strong>testable code tends to be clear code</strong>, and vice versa.
+    This insight may take a while to sink in if you are new to TDD &mdash; be patient and
+    have faith in the process.</p>
+  </div>
+
+  <h2>1.2 QA is a Shared Responsibility</h2>
+
+  <p>In Agile development, developers do not "toss their code over the wall" to a separate
+  Quality Assurance (QA) team. While most testing is expected to be automated, there is
+  often a role for some manual testing:</p>
+
+  <ul>
+    <li><strong>User acceptance testing</strong> &mdash; observes actual users (or QA
+    engineers acting as "typical" users) using the product to determine whether you
+    "built the right thing"</li>
+    <li><strong>Operational acceptance testing</strong> &mdash; manually tries additional
+    scenarios to ensure you "built the thing right"</li>
+  </ul>
+
+  <p>Both can uncover bugs that were previously undetected, some of which can then have
+  automated tests created for them. Some visual aspects of design &mdash; such as whether
+  particular elements render in a visually appealing way &mdash; require manual inspection.
+  In general, <strong>modern software quality assurance is the shared responsibility of a
+  whole team</strong> following good processes, rather than compartmentalized in a separate
+  group.</p>
+
+  <h2>1.3 Test-Driven Development (TDD)</h2>
+
+  <p>TDD advocates the use of <strong>tests to drive the development of code</strong>. When
+  TDD is used to create new code, as in this module, it is sometimes referred to as
+  <strong>test-first development</strong>. The basic TDD workflow, repeated for each
+  created test, is known as <strong>Red&ndash;Green&ndash;Refactor</strong>.</p>
+
+  <!-- Red-Green-Refactor cycle -->
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">1</span>
+      <span class="step-title">Write a failing test (think before you build)</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Before you write any code, write a test for one aspect of the
+      behavior you expect the new code will have. Since the code being tested doesn't
+      exist yet, writing the test forces you to think about how you wish the code would
+      behave and interact with its collaborators <em>if it did exist</em>. We call this
+      <strong>"exercising the code you wish you had."</strong></p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">2</span>
+      <span class="step-title">Red &mdash; run the test and watch it fail</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Run the test and verify that it fails because you haven't yet
+      implemented the code necessary to make it pass (that is, the code you wish you had).</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#2E7D32;">
+      <span class="step-num" style="color:#2E7D32;">3</span>
+      <span class="step-title">Green &mdash; write the simplest code that passes</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Write the <strong>simplest possible code</strong> that causes
+      this test to pass without breaking any existing tests.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#1F4E79;">
+      <span class="step-num" style="color:#1F4E79;">4</span>
+      <span class="step-title">Refactor &mdash; clean up with confidence</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Look for opportunities to refactor either your code or your
+      tests &mdash; changing the code's structure to eliminate redundancy or repetition
+      that may have arisen as a result of adding the new code. <strong>The tests ensure
+      that your refactoring doesn't introduce bugs.</strong></p>
+    </div>
+  </div>
+
+  <div class="box box-note">
+    <div class="box-title">&#128064; How Do You Know When You're Done?</div>
+    <p style="margin:0;">If you are using BDD (Module 2) to drive your application
+    development, the new code being written is presumably necessary to make one or more
+    Gherkin scenario steps pass. <strong>When all steps in a scenario pass, you're
+    done.</strong></p>
+  </div>
+
+  <p>Although TDD may feel strange at first, it tends to result in code that is not only
+  well tested, but also <strong>more modular and easier to read</strong> than code
+  developed separately from tests. While TDD is certainly not the only way to achieve
+  those goals, it is difficult to end up with seriously deficient code if TDD is used
+  correctly.</p>
+
+  <h2>1.4 The FIRST Properties of a Good Test</h2>
+
+  <p>What about the tests themselves? Five principles for creating good tests are
+  summarized by the acronym <strong>FIRST</strong>: Fast, Independent, Repeatable,
+  Self-checking, and Timely.</p>
+
+  <div class="pill-row">
+    <div class="pill-card" style="background:#E6F1FB;border:1px solid #85B7EB;">
+      <div class="pill-letter" style="color:#0C447C;">F</div>
+      <div class="pill-label" style="color:#0C447C;">Fast</div>
+    </div>
+    <div class="pill-card" style="background:#E1F5EE;border:1px solid #5DCAA5;">
+      <div class="pill-letter" style="color:#085041;">I</div>
+      <div class="pill-label" style="color:#085041;">Independent</div>
+    </div>
+    <div class="pill-card" style="background:#FAEEDA;border:1px solid #EF9F27;">
+      <div class="pill-letter" style="color:#412402;">R</div>
+      <div class="pill-label" style="color:#412402;">Repeatable</div>
+    </div>
+    <div class="pill-card" style="background:#EEEDFE;border:1px solid #AFA9EC;">
+      <div class="pill-letter" style="color:#26215C;">S</div>
+      <div class="pill-label" style="color:#26215C;">Self-checking</div>
+    </div>
+    <div class="pill-card" style="background:#FCE4EC;border:1px solid #F48FB1;">
+      <div class="pill-letter" style="color:#880E4F;">T</div>
+      <div class="pill-label" style="color:#880E4F;">Timely</div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="step-block">
+    <div class="step-header" style="background:#0C447C;">
+      <span class="step-num" style="color:#0C447C;">F</span>
+      <span class="step-title">Fast</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">It should be easy and quick to run the subset of test cases
+      relevant to your current coding task, to avoid interfering with your train of
+      thought.</p>
+    </div>
+  </div>
+
+  <!-- I -->
+  <div class="step-block">
+    <div class="step-header" style="background:#085041;">
+      <span class="step-num" style="color:#085041;">I</span>
+      <span class="step-title">Independent</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">The order in which tests run shouldn't matter. More precisely,
+      if no test relies on preconditions created by other tests, we can prioritize running
+      only a subset of tests that cover recent code changes.</p>
+    </div>
+  </div>
+
+  <!-- R -->
+  <div class="step-block">
+    <div class="step-header" style="background:#412402;">
+      <span class="step-num" style="color:#412402;">R</span>
+      <span class="step-title">Repeatable</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Test behavior should not depend on external factors such as
+      today's date or on "magic constants" that will break the tests if their values
+      change &mdash; as occurred with many 1960s programs when the year 2000 arrived,
+      due to the <strong>Y2K problem</strong>.</p>
+    </div>
+  </div>
+
+  <!-- S -->
+  <div class="step-block">
+    <div class="step-header" style="background:#26215C;">
+      <span class="step-num" style="color:#26215C;">S</span>
+      <span class="step-title">Self-checking</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Each test should be able to determine on its own whether it
+      passed or failed, rather than relying on humans to check its output.</p>
+    </div>
+  </div>
+
+  <!-- T -->
+  <div class="step-block">
+    <div class="step-header" style="background:#880E4F;">
+      <span class="step-num" style="color:#880E4F;">T</span>
+      <span class="step-title">Timely</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Tests should be created or updated at the same time as the
+      code being tested. As we'll see, with test-driven development the tests are written
+      <strong>immediately before</strong> the code.</p>
+    </div>
+  </div>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>Test-centric construction improves readability and maintainability: testable code
+      tends to be clear code, and vice versa.</li>
+      <li>Software QA is a shared responsibility of the whole team: developers write most
+      of their own tests, with QA staff improving the testing environment and handling
+      kinds of testing that are hard to automate.</li>
+      <li>The TDD cycle of Red&ndash;Green&ndash;Refactor begins with writing a test that
+      fails because the subject code doesn't exist yet (Red), then adding the minimum code
+      necessary to pass just that one example (Green), and finally DRYing out and cleaning
+      up the test code (Refactor).</li>
+      <li>Tests should be <strong>F</strong>ast, <strong>I</strong>ndependent of run order
+      and thus <strong>R</strong>epeatable, <strong>S</strong>elf-checking, and developed in
+      a <strong>T</strong>imely way with respect to the code they test.</li>
+    </ul>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.1.1</div>
+    <p>Suppose step 1 in your Cucumber/Behave scenario is passing, but step 2 is failing
+    because the code needed is not yet written. If you are practicing strict BDD and TDD,
+    explain why you will necessarily go through one or more cycles of
+    Red&ndash;Green&ndash;Refactor before step 2 passes.</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    If the code for step 2 does not yet exist, strict TDD says you should develop that
+    code by first writing a focused test for one aspect of the code's behavior, watching
+    that test fail, then writing the code to make it pass.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — ARRANGE, ACT, ASSERT
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s2">2. Anatomy of a Test Case: Arrange, Act, Assert</h1>
+
+  <h2>2.1 Key Vocabulary</h2>
+
+  <p>Following the terminology in the widely-used <em>xUnit Test Patterns</em> (Meszaros
+  2007), we refer to the object being tested as the <strong>System Under Test
+  (SUT)</strong> &mdash; whether that "object" is a single method, a group of methods, or
+  even the entire application. That is, SUT is defined from the point of view of the
+  test.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#128203; Core Definitions</div>
+    <ul style="margin:0 0 0 20px;">
+      <li><strong>System Under Test (SUT)</strong> &mdash; the thing being tested, as small
+      as a single method or as large as the whole app</li>
+      <li><strong>Test suite</strong> &mdash; a collection of test cases. A codebase usually
+      has several test suites, corresponding to different kinds of tests (we discuss this
+      further in Section 6).</li>
+      <li><strong>Unit test</strong> &mdash; the finest-grained test case, for which the SUT
+      is a single method</li>
+      <li><strong>Leaf method</strong> &mdash; a method that does not call any other methods
+      to help do its job. Since even a leaf method may have multiple testable behaviors, a
+      single method may be the subject of multiple test cases.</li>
+    </ul>
+  </div>
+
+  <h2>2.2 Choosing Input Values: Critical Points and Categories</h2>
+
+  <p>The goal of a single test case for some SUT is to check that some specific behavior
+  happens (for example, the return value of a function matches an expected result) or
+  doesn't happen (for example, passing an empty string to a string comparison function
+  doesn't result in an error or exception).</p>
+
+  <p>A good guideline is to use input values that would cause the calculation performed in
+  the method to follow <strong>different code paths</strong>. Consider a leap-year detector.
+  By inspection, we can deduce four categories of input that completely cover the space of
+  possible behaviors:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:8%;">#</th>
+        <th>Category</th>
+        <th style="width:18%;">Test Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>A number that is not a multiple of 4 or 100 (and therefore not a multiple of 400)</td>
+        <td><code>1973</code></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>A number that is a multiple of 4, but not of 100 (and therefore not of 400)</td>
+        <td><code>2008</code></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>A number that is not a multiple of 400, but is a multiple of 100</td>
+        <td><code>1900</code></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>A number that is a multiple of 400</td>
+        <td><code>2000</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:0.9em;color:var(--text-muted);">The calculation of a leap year
+  depends only on which category a value is in, not the value itself.</p>
+
+  <h2>2.3 A "Pure" TDD Workflow for <code>is_leap_year()</code></h2>
+
+  <p>A "pure" TDD workflow for developing a function that detects leap years might proceed
+  as follows:</p>
+
+  <ol>
+    <li>Choose any value in category 1 above, and write a test case that asserts that the
+    return value of <code>is_leap_year</code> is falsy when called with that value.</li>
+    <li>The test fails because <code>is_leap_year</code> doesn't yet exist, so write just
+    enough of <code>is_leap_year</code> to make that case pass.</li>
+    <li>Next, choose a value in category 2, write the corresponding test, and when it
+    fails, modify <code>is_leap_year</code> so that now both tests pass.</li>
+    <li>Continue until all categories are covered.</li>
+  </ol>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; "Why Not Just Write the Whole Method at Once?"</div>
+    <p style="margin:0;"><code>is_leap_year</code> is such a simple leaf method, and its
+    functionality so well-circumscribed, that you might object that you could write the
+    entire method at once along with all four test cases, rather than going through
+    Red&ndash;Green&ndash;Refactor four separate times. For very simple leaf functions,
+    this objection has merit &mdash; but the discipline of writing one test at a time
+    scales to far more complex code, where it is not at all obvious what "the whole
+    method" should look like in advance.</p>
+  </div>
+
+  <h2>2.4 The Three Phases of a Test Case</h2>
+
+  <p>Each test case follows the same three-part structure:</p>
+
+  <div class="pill-row">
+    <div class="pill-card" style="background:#FAEEDA;border:1px solid #EF9F27;flex:1;">
+      <div class="pill-label" style="color:#412402;font-size:1.05rem;">Arrange</div>
+      <div style="font-size:0.8rem;color:#633806;margin-top:4px;">set up preconditions</div>
+    </div>
+    <div class="pill-card" style="background:#E6F1FB;border:1px solid #85B7EB;flex:1;">
+      <div class="pill-label" style="color:#0C447C;font-size:1.05rem;">Act</div>
+      <div style="font-size:0.8rem;color:#0C447C;margin-top:4px;">stimulate the SUT</div>
+    </div>
+    <div class="pill-card" style="background:#E1F5EE;border:1px solid #5DCAA5;flex:1;">
+      <div class="pill-label" style="color:#085041;font-size:1.05rem;">Assert</div>
+      <div style="font-size:0.8rem;color:#085041;margin-top:4px;">verify expected results</div>
+    </div>
+  </div>
+
+  <p>The <strong>assertion step</strong> makes each test <strong>Self-checking</strong>,
+  eliminating the need for a human programmer to inspect test results. Common assertions
+  are checks on <strong>values</strong> (equality, betweenness, and so on) and checks on
+  <strong>behavior</strong> (is an exception raised or not).</p>
+
+  <p>Here is the leap-year example written as pytest tests, following
+  Arrange&ndash;Act&ndash;Assert (in this simple case Arrange is trivial, since there is no
+  setup needed beyond the input value itself):</p>
+
+  <div style="margin:16px 0 24px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; test_leap_year.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">calendar_utils</span> <span style="color:#569CD6;">import</span> <span style="color:#DCDCAA;">is_leap_year</span>
+
+<span style="color:#6A9955;"># Category 1: not a multiple of 4</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_not_multiple_of_4</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1973</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>
+
+<span style="color:#6A9955;"># Category 2: multiple of 4, not of 100</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_4_not_100</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2008</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">True</span>
+
+<span style="color:#6A9955;"># Category 3: multiple of 100, not of 400</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_100_not_400</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1900</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>
+
+<span style="color:#6A9955;"># Category 4: multiple of 400</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_400</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2000</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">True</span></pre>
+  </div>
+
+  <p>A few common assertion patterns in pytest:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%;">On a value</th>
+        <th>Example (pytest)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Value equality</td>
+        <td><code>assert x == "Python"</code> &nbsp;/&nbsp; <code>assert x != "Python"</code></td>
+      </tr>
+      <tr>
+        <td>Boolean (truthy)</td>
+        <td><code>assert x</code> &nbsp;<span style="color:var(--text-muted);">(non-False/non-None)</span></td>
+      </tr>
+      <tr>
+        <td>Regular expression</td>
+        <td><code>assert re.match(r"YourRegexHere", s)</code></td>
+      </tr>
+      <tr>
+        <td>Object type</td>
+        <td><code>assert isinstance(a, list)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30%;">On a block / call</th>
+        <th>Example (pytest)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Exception</td>
+        <td><code>with pytest.raises(ValueError): math.sqrt(-1)</code></td>
+      </tr>
+      <tr>
+        <td>Side effect</td>
+        <td><code>before = len(reviews); delete_first_review(); assert len(reviews) == before - 1</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:0.9em;color:var(--text-muted);">One can invert the sense of any
+  assertion (<code>assert x != 50</code>), but as Module 2 warned, negative assertions
+  should be used with caution, since there are many ways for a program not to satisfy a
+  particular condition while still not behaving correctly.</p>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>The <strong>system under test (SUT)</strong>, which may be as small as a single
+      method or as large as the whole app, is the subject of a particular test case. A
+      <strong>test suite</strong> is a full set of tests, usually including unit,
+      integration, and perhaps other types.</li>
+      <li>The finest-grained tests are <strong>unit tests</strong>, which test the code in
+      a single method. The simplest unit tests are those for <strong>pure leaf
+      functions</strong>: deterministic, no side effects, no collaborators or helper
+      methods called. It is worth structuring your code to expose as much functionality
+      as possible in pure leaf functions.</li>
+      <li>One way to select input values for unit tests is to test <strong>critical
+      points</strong> (values that may influence the code path in the SUT) and values
+      from each <strong>noncritical set</strong> (a set within which the choice of any
+      particular value does not affect control flow).</li>
+      <li>Each unit test checks just one behavior &mdash; each category of input values
+      gets its own test case.</li>
+      <li>Each test case follows the same structure: <strong>arrange</strong> (set up
+      preconditions), <strong>act</strong> (stimulate the SUT), <strong>assert</strong>
+      (verify the expected results). The assertion step makes each test
+      <strong>Self-checking</strong>.</li>
+    </ul>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — DOUBLES AND SEAMS
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s3">3. Isolating Code: Doubles and Seams</h1>
+
+  <p>We can distinguish three characteristics &mdash; which may occur individually or
+  together &mdash; that complicate unit testing:</p>
+
+  <ol>
+    <li>The SUT <strong>relies on results from calling collaborator methods</strong> or
+    invoking behaviors on collaborator objects</li>
+    <li>The SUT has <strong>nondeterministic or time-dependent behavior</strong></li>
+    <li>The SUT <strong>has side effects</strong></li>
+  </ol>
+
+  <h2>3.1 A Motivating Example: Looking Up a Movie</h2>
+
+  <p>Suppose a controller action tries to search a remote database for one or more matches
+  to a movie title:</p>
+
+  <ul>
+    <li>The <code>Movie</code> model has a function <code>find_in_tmdb</code> that calls the
+    API of an external service, The Movie Database (TMDb), and returns a list of
+    <code>Movie</code> objects, which may be empty if there were no matches.</li>
+    <li>If there are no matches, the controller action should redirect the user back to the
+    search page with an appropriate message.</li>
+    <li>If there is exactly one match, the controller should render a view that allows the
+    user to enter a review for that movie.</li>
+    <li>If there is more than one match, the controller should render a different view that
+    allows the user to specify which movie they want to review.</li>
+    <li>Because the model method relies on calling an external service, the call might fail.
+    In that case, we assume <code>find_in_tmdb</code> will raise an exception
+    <code>ConnectionError</code>.</li>
+  </ul>
+
+  <div style="margin:16px 0 24px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; views.py &mdash; review_movie
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">review_movie</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">request</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#9CDCFE;">search_string</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">request</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">GET</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">get</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"search"</span><span style="color:#D4D4D4;">)</span>
+    <span style="color:#569CD6;">try</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#9CDCFE;">matches</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">Movie</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">find_in_tmdb</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">search_string</span><span style="color:#D4D4D4;">)</span>
+        <span style="color:#569CD6;">if</span> <span style="color:#569CD6;">not</span> <span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">:</span>  <span style="color:#6A9955;"># nothing was found</span>
+            <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">redirect</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"review_movie"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">alert</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"No matches."</span><span style="color:#D4D4D4;">)</span>
+        <span style="color:#569CD6;">elif</span> <span style="color:#DCDCAA;">len</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">)</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">1</span><span style="color:#D4D4D4;">:</span>
+            <span style="color:#9CDCFE;">movie</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">[</span><span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">]</span>
+            <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">render</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">request</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"review_movie.html"</span><span style="color:#D4D4D4;">,</span> <span style="color:#D4D4D4;">{</span><span style="color:#CE9178;">"movie"</span><span style="color:#D4D4D4;">:</span> <span style="color:#9CDCFE;">movie</span><span style="color:#D4D4D4;">})</span>
+        <span style="color:#569CD6;">else</span><span style="color:#D4D4D4;">:</span>  <span style="color:#6A9955;"># more than 1 match</span>
+            <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">render</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">request</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"select_movie.html"</span><span style="color:#D4D4D4;">,</span> <span style="color:#D4D4D4;">{</span><span style="color:#CE9178;">"movies"</span><span style="color:#D4D4D4;">:</span> <span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">})</span>
+    <span style="color:#569CD6;">except</span> <span style="color:#9CDCFE;">ConnectionError</span> <span style="color:#569CD6;">as</span> <span style="color:#9CDCFE;">err</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">redirect</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"review_movie"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">alert</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">f"Error contacting TMDb: {err}"</span><span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <p>How would we unit-test this view? The <strong>Arrange</strong> step consists of
+  preparing a request with some search string. The <strong>Act</strong> step consists of
+  calling the view with that search string. But the <strong>Assert</strong> step depends
+  on whether the call to <code>find_in_tmdb</code> returns an empty list, a list of exactly
+  one match, a list containing more than one match, or raises an exception because of an
+  error communicating with TMDb. There are really <strong>four test cases</strong> required
+  here, and to test each of them, we essentially need to be able to <strong>control the
+  behavior of the call to <code>find_in_tmdb</code></strong>.</p>
+
+  <h2>3.2 Seams</h2>
+
+  <div class="box box-note">
+    <div class="box-title">&#128273; Definition: Seam</div>
+    <p style="margin:0;">Michael Feathers (2004) defines a <strong>seam</strong> as
+    <em>"a place where you can alter behavior in your program without editing in that
+    place."</em> In our case, we want to alter (control) the behavior of
+    <code>find_in_tmdb</code> without changing the source code of the view function.</p>
+  </div>
+
+  <p>The strategy is to <strong>temporarily replace</strong> <code>find_in_tmdb</code> so
+  that instead of calling the real method, it calls a "fake" method whose behavior we
+  control and can change for each test case. Such a construction is called a
+  <strong>method stub</strong>. In pytest, this is most commonly done using the
+  <code>monkeypatch</code> fixture or the <code>unittest.mock</code> library.</p>
+
+  <div style="margin:16px 0 24px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; test_views.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_redirects_to_search_if_no_match</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">client</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#6A9955;"># Arrange: stub Movie.find_in_tmdb to return an empty list</span>
+    <span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">setattr</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">Movie</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"find_in_tmdb"</span><span style="color:#D4D4D4;">,</span> <span style="color:#569CD6;">lambda</span> <span style="color:#9CDCFE;">q</span><span style="color:#D4D4D4;">:</span> <span style="color:#D4D4D4;">[])</span>
+
+    <span style="color:#6A9955;"># Act</span>
+    <span style="color:#9CDCFE;">response</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">client</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">get</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"/review_movie"</span><span style="color:#D4D4D4;">,</span> <span style="color:#D4D4D4;">{</span><span style="color:#CE9178;">"search"</span><span style="color:#D4D4D4;">:</span> <span style="color:#CE9178;">"I Am Big Bird"</span><span style="color:#D4D4D4;">})</span>
+
+    <span style="color:#6A9955;"># Assert</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">response</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">status_code</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">302</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">response</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">url</span> <span style="color:#D4D4D4;">==</span> <span style="color:#DCDCAA;">reverse</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"review_movie"</span><span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <p>The <strong>Arrange</strong> part of this test now includes setting up a stub for
+  the method, specifying that when the stub is called, it should return an empty list
+  &mdash; ensuring that <code>not matches</code> is true in our view, causing the
+  redirect branch to execute next.</p>
+
+  <p>As is typical for a testing framework, <code>monkeypatch</code> automatically
+  <strong>undoes</strong> the patch after each test function finishes, making the stub
+  visible only to that test case and thereby keeping tests <strong>Independent</strong>.
+  Note that it is not an error for <code>find_in_tmdb</code> to never be called &mdash;
+  the stub setup only specifies <em>what should happen if</em> that method is called. If
+  we wanted to express the test condition that the method <em>must</em> be called, we
+  would use a <code>Mock</code> object and assert that it was called, as shown next.</p>
+
+  <h2>3.3 Stubs vs. Mocks vs. Spies</h2>
+
+  <div class="box box-note">
+    <div class="box-title">&#128208; Test Doubles &mdash; A Vocabulary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li><strong>Stub</strong> &mdash; a piece of code that replaces the real method's
+      code with a controllable or fixed behavior for testing purposes. A stub only
+      specifies what should happen <em>if</em> it's called.</li>
+      <li><strong>Mock</strong> &mdash; a simplified "stunt double" of an object that can
+      only mimic a few fixed behaviors, such as returning fixed values for specific
+      attributes. Mocks are useful when a real object would be complex to instantiate
+      because it has other dependencies, yet only a few specific properties of the object
+      are necessary for the SUT to work properly. A mock additionally lets you
+      <strong>assert that it was called</strong>.</li>
+      <li><strong>Spy</strong> &mdash; similar to a stub, but lets a call to the real
+      method proceed while "recording" the arguments and return values for later
+      inspection.</li>
+      <li><strong>Test double</strong> &mdash; the generic term covering all of the above
+      and a few other types of seams.</li>
+    </ul>
+  </div>
+
+  <p>The term <strong>test double</strong> generically covers stubs, mocks, and spies.
+  Figure 8.6 in the textbook summarizes typical strategies for using doubles in various
+  unit-testing scenarios; the table below shows the same strategies translated to
+  pytest.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:35%;">System Under Test (SUT)</th>
+        <th>Testing Strategy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pure leaf function &mdash; no side effects, no collaborator methods or
+        classes, same inputs yield same outputs</td>
+        <td>Assert correct output results for critical values and for arbitrary values in
+        noncritical regions</td>
+      </tr>
+      <tr>
+        <td>Relies on results from calling collaborator methods or invoking behaviors on
+        collaborator objects</td>
+        <td>In Arrange phase, create doubles that "force" the desired behavior by
+        returning prearranged values, raising an exception, and so on</td>
+      </tr>
+      <tr>
+        <td>Nondeterministic or time-dependent behavior</td>
+        <td>In code under test, isolate the nondeterminism in a method call that can be
+        stubbed using a double in the Arrange phase</td>
+      </tr>
+      <tr>
+        <td>Has side effects</td>
+        <td>In Arrange phase, observe the relevant state before executing test code; in
+        Assert phase, observe it again and check for the side effect</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Here are the four strategies above illustrated with concrete, everyday examples from
+  a school grading app &mdash; a domain every student already understands. For each case
+  the <strong>code under test</strong> is shown first so you can see exactly what is being
+  tested, then the test itself:</p>
+
+  <!-- Case 1 -->
+  <div class="box box-note" style="margin:20px 0 8px;">
+    <div class="box-title">&#128221; Case 1 &mdash; Pure leaf function: just call it and check</div>
+    <p style="margin:0 0 8px;"><code>letter_grade(score)</code> does pure arithmetic. It
+    calls nothing else, so there is nothing to fake.</p>
+  </div>
+
+  <div style="margin:0 0 8px;">
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Code under test &mdash; grades.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">letter_grade</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">score</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">score</span> <span style="color:#D4D4D4;">&gt;=</span> <span style="color:#B5CEA8;">90</span><span style="color:#D4D4D4;">:</span> <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"A"</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">score</span> <span style="color:#D4D4D4;">&gt;=</span> <span style="color:#B5CEA8;">80</span><span style="color:#D4D4D4;">:</span> <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"B"</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">score</span> <span style="color:#D4D4D4;">&gt;=</span> <span style="color:#B5CEA8;">70</span><span style="color:#D4D4D4;">:</span> <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"C"</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">score</span> <span style="color:#D4D4D4;">&gt;=</span> <span style="color:#B5CEA8;">60</span><span style="color:#D4D4D4;">:</span> <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"D"</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"F"</span></pre>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Test &mdash; test_grades.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#6A9955;"># Arrange: nothing needed — the input IS the setup</span>
+<span style="color:#6A9955;"># Act + Assert in one line: call the function, check the result</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_grade_for_90_is_A</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">letter_grade</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">90</span><span style="color:#D4D4D4;">)</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"A"</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_grade_for_60_is_D</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">letter_grade</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">60</span><span style="color:#D4D4D4;">)</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"D"</span></pre>
+  </div>
+
+  <!-- Case 2 -->
+  <div class="box box-note" style="margin:20px 0 8px;">
+    <div class="box-title">&#9729;&#65039; Case 2 &mdash; Collaborator dependency: fake the thing you don't control</div>
+    <p style="margin:0 0 8px;"><code>get_status_message()</code> depends on
+    <code>weather.is_raining()</code>, which calls a real weather API. We can't control
+    whether it actually rains when the test runs, so we <strong>fake</strong>
+    <code>is_raining()</code> to return exactly what we need.</p>
+  </div>
+
+  <div style="margin:0 0 8px;">
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Code under test &mdash; status.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">get_status_message</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">weather</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">is_raining</span><span style="color:#D4D4D4;">():</span>   <span style="color:#6A9955;"># &lt;-- calls external weather API</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"Don't forget your umbrella!"</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#CE9178;">"Have a nice day!"</span></pre>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Test &mdash; test_status.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_umbrella_reminder_when_raining</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#6A9955;"># Arrange: replace weather.is_raining with a fake that always returns True</span>
+    <span style="color:#6A9955;"># (we don't want the test to depend on actual weather!)</span>
+    <span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">setattr</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">weather</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"is_raining"</span><span style="color:#D4D4D4;">,</span> <span style="color:#569CD6;">lambda</span><span style="color:#D4D4D4;">:</span> <span style="color:#569CD6;">True</span><span style="color:#D4D4D4;">)</span>
+
+    <span style="color:#6A9955;"># Act + Assert: call the function, check it picks the rainy message</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">get_status_message</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"Don't forget your umbrella!"</span></pre>
+  </div>
+
+  <!-- Case 3 -->
+  <div class="box box-note" style="margin:20px 0 8px;">
+    <div class="box-title">&#128197; Case 3 &mdash; Implicit time dependency: freeze the clock</div>
+    <p style="margin:0 0 8px;"><code>get_discount_percent()</code> gives 50% off on Black
+    Friday. If you run this test on any other day of the year, it would return 0 and the
+    test would fail &mdash; even though the code is correct. So we <strong>freeze the
+    date</strong> to Black Friday so the test always behaves the same way regardless of
+    when it's run.</p>
+  </div>
+
+  <div style="margin:0 0 8px;">
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Code under test &mdash; shop.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">datetime</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">date</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">get_discount_percent</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">date</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">today</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">==</span> <span style="color:#9CDCFE;">date</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2024</span><span style="color:#D4D4D4;">,</span> <span style="color:#B5CEA8;">11</span><span style="color:#D4D4D4;">,</span> <span style="color:#B5CEA8;">29</span><span style="color:#D4D4D4;">):</span>  <span style="color:#6A9955;"># Black Friday 2024</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#B5CEA8;">50</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#B5CEA8;">0</span></pre>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Test &mdash; test_shop.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">datetime</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">date</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_50_percent_discount_on_black_friday</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#6A9955;"># Arrange: freeze date.today() to Black Friday — test always passes,</span>
+    <span style="color:#6A9955;"># regardless of what day it actually is when you run the test</span>
+    <span style="color:#9CDCFE;">black_friday</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">date</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2024</span><span style="color:#D4D4D4;">,</span> <span style="color:#B5CEA8;">11</span><span style="color:#D4D4D4;">,</span> <span style="color:#B5CEA8;">29</span><span style="color:#D4D4D4;">)</span>
+    <span style="color:#9CDCFE;">monkeypatch</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">setattr</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">date</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"today"</span><span style="color:#D4D4D4;">,</span> <span style="color:#569CD6;">classmethod</span><span style="color:#D4D4D4;">(</span><span style="color:#569CD6;">lambda</span> <span style="color:#9CDCFE;">cls</span><span style="color:#D4D4D4;">:</span> <span style="color:#9CDCFE;">black_friday</span><span style="color:#D4D4D4;">))</span>
+
+    <span style="color:#6A9955;"># Act + Assert</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">get_discount_percent</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">50</span></pre>
+  </div>
+
+  <!-- Case 4 -->
+  <div class="box box-note" style="margin:20px 0 8px;">
+    <div class="box-title">&#127979; Case 4 &mdash; Side effects: check state before and after</div>
+    <p style="margin:0 0 8px;"><code>enroll_student("Alice")</code> doesn't return anything
+    useful &mdash; its whole job is to <strong>change the classroom's state</strong> by
+    adding a student to the roster. To test this, we record the class size before the
+    call and verify it grew by exactly 1 afterward.</p>
+  </div>
+
+  <div style="margin:0 0 8px;">
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Code under test &mdash; classroom.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#9CDCFE;">roster</span> <span style="color:#D4D4D4;">=</span> <span style="color:#D4D4D4;">[]</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">student_count</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">len</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">roster</span><span style="color:#D4D4D4;">)</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">enroll_student</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">name</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#9CDCFE;">roster</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">append</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">name</span><span style="color:#D4D4D4;">)</span>  <span style="color:#6A9955;"># no return value — changes state as a side effect</span></pre>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">Test &mdash; test_classroom.py</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_enroll_increases_class_size_by_1</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#6A9955;"># Arrange: snapshot the count BEFORE the action</span>
+    <span style="color:#9CDCFE;">before</span> <span style="color:#D4D4D4;">=</span> <span style="color:#DCDCAA;">student_count</span><span style="color:#D4D4D4;">()</span>
+
+    <span style="color:#DCDCAA;">enroll_student</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"Alice"</span><span style="color:#D4D4D4;">)</span>  <span style="color:#6A9955;"># Act: do the thing</span>
+
+    <span style="color:#6A9955;"># Assert: the count AFTER must be exactly one more than before</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">student_count</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">==</span> <span style="color:#9CDCFE;">before</span> <span style="color:#D4D4D4;">+</span> <span style="color:#B5CEA8;">1</span></pre>
+  </div>
+
+  <!-- Summary table -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width:28%;">Case</th>
+        <th>What makes it tricky</th>
+        <th>Solution</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1.</strong> <code>letter_grade()</code> &mdash; leaf function</td>
+        <td>Nothing &mdash; it's entirely self-contained</td>
+        <td>Just call it and check the return value</td>
+      </tr>
+      <tr>
+        <td><strong>2.</strong> <code>get_status_message()</code> &mdash; collaborator</td>
+        <td>Depends on <code>weather.is_raining()</code>, which changes every day</td>
+        <td>Fake <code>is_raining()</code> with <code>monkeypatch</code> to return a fixed value</td>
+      </tr>
+      <tr>
+        <td><strong>3.</strong> <code>get_discount_percent()</code> &mdash; time dependency</td>
+        <td>Result depends on today's date, which changes every day</td>
+        <td>Freeze <code>date.today()</code> to a known date with <code>monkeypatch</code></td>
+      </tr>
+      <tr>
+        <td><strong>4.</strong> <code>enroll_student()</code> &mdash; side effect</td>
+        <td>Returns nothing &mdash; only changes state</td>
+        <td>Record state before, call the function, compare state after</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Asserting that a Mock Was Called</h3>
+
+  <p>If we want to express the test condition that a method <em>must</em> be called &mdash;
+  not just stub its return value &mdash; we use <code>unittest.mock.Mock</code> or
+  <code>MagicMock</code> and assert on the call afterward:</p>
+
+  <div style="margin:16px 0 28px;">
+    <pre style="margin:0;border-radius:8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">unittest.mock</span> <span style="color:#569CD6;">import</span> <span style="color:#DCDCAA;">patch</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_find_in_tmdb_is_called_with_search_string</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">with</span> <span style="color:#DCDCAA;">patch.object</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">Movie</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"find_in_tmdb"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">return_value</span><span style="color:#D4D4D4;">=</span><span style="color:#D4D4D4;">[])</span> <span style="color:#569CD6;">as</span> <span style="color:#9CDCFE;">mock_find</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#9CDCFE;">client</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">get</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"/review_movie"</span><span style="color:#D4D4D4;">,</span> <span style="color:#D4D4D4;">{</span><span style="color:#CE9178;">"search"</span><span style="color:#D4D4D4;">:</span> <span style="color:#CE9178;">"Milk"</span><span style="color:#D4D4D4;">})</span>
+
+    <span style="color:#6A9955;"># Assert: the stub MUST have been called with "Milk"</span>
+    <span style="color:#9CDCFE;">mock_find</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">assert_called_once_with</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"Milk"</span><span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>When testing a method that has external dependencies &mdash; calling other
+      methods or consuming other objects &mdash; we use <strong>test doubles</strong> to
+      "stand in" for the real methods or objects and allow the test to tightly control the
+      SUT's behavior.</li>
+      <li>Test doubles are set up in the <strong>Arrange</strong> phase of a test case.
+      <strong>Stubs</strong> are set up to control return values from collaborator
+      methods, while <strong>mocks</strong> are set up to mimic just those behaviors of
+      the collaborator object used by the SUT.</li>
+      <li>Depending on what behavior is being tested, a test case can specify whether a
+      particular stub <em>must</em> be called &mdash; that is, if the stub not being
+      called signals a bug.</li>
+    </ul>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.3.1</div>
+    <p>Name two likely violations of FIRST that arise when unit tests actually call an
+    external service as part of testing.</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    The test may no longer be <strong>Fast</strong>, since it takes much longer to call an
+    external service than to compute locally. The test may no longer be
+    <strong>Repeatable</strong>, since circumstances beyond our control could affect its
+    outcome, such as the temporary unavailability of the external service.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 4 — STUBBING THE INTERNET
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s4">4. Stubbing the Internet</h1>
+
+  <p>When testing a method that makes a call to an external service via an API, there are
+  many reasons we almost certainly don't want to make a <strong>real</strong> call to that
+  API.</p>
+
+  <div class="box box-warn">
+    <div class="box-title">&#9888;&#65039; A Real Cautionary Tale</div>
+    <p style="margin:0;">Several years ago, the CS department head at a major US
+    university received a complaint from a website that hosted academic papers, because a
+    group of students had been working on a student project that repeatedly made "test"
+    API calls against the real site. The site threatened to <strong>cut off the
+    university's access</strong> if the students continued this behavior.</p>
+  </div>
+
+  <p>Another reason is that making real calls might prevent the test from being
+  <strong>Repeatable</strong> (depending on how the remote service responds), and would
+  almost certainly prevent the test from being <strong>Fast</strong>.</p>
+
+  <p>In fact, when testing our own app, all that we really care about is whether the API
+  calls it would make are <strong>correctly formed</strong> &mdash; analogous to checking
+  a call to a method stub to make sure the arguments are correct. So the more general
+  question is: <strong>where should we stub external methods when testing an app that
+  makes calls to an external service?</strong></p>
+
+  <h2>4.1 Stubbing "Close By" vs. "Far Away"</h2>
+
+  <p>In Section 3 we chose to stub the <code>Movie</code> model itself and mimic the
+  results of its calls to TMDb. But a more robust integration-testing approach would
+  instead place the stub <strong>"closer" to the remote service</strong>. In particular,
+  we could create <strong>fixtures</strong> &mdash; files containing the JSON content
+  returned by actual calls to the service &mdash; and arrange to intercept calls to the
+  remote service and return the contents of those fixture files instead.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#127760; Python Tooling: <code>responses</code> and
+    <code>VCR.py</code></div>
+    <ul style="margin:0 0 0 20px;">
+      <li>The <code>responses</code> library does for Python what the Ruby gem
+      <code>Webmock</code> does: it stubs out the entire web except for particular URIs
+      that return a canned response when accessed by your code.</li>
+      <li><code>VCR.py</code> (a port of Ruby's <code>vcr</code> gem) automates getting a
+      response from the real service, saving the response data in a fixture file (called a
+      <strong>cassette</strong>), and then "replaying" the cassette when your tests cause
+      the remote service to be "called" &mdash; by intercepting low-level calls in
+      Python's HTTP libraries.</li>
+    </ul>
+  </div>
+
+  <div style="margin:16px 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; test_tmdb_integration.py &mdash; stubbing "far away" with <code>responses</code>
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">responses</span>
+
+<span style="color:#569CD6;">@responses.activate</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_find_in_tmdb_returns_one_match</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#6A9955;"># Arrange: intercept the TMDb URL and return canned JSON</span>
+    <span style="color:#9CDCFE;">responses</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">add</span><span style="color:#D4D4D4;">(</span>
+        <span style="color:#9CDCFE;">responses</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">GET</span><span style="color:#D4D4D4;">,</span>
+        <span style="color:#CE9178;">"https://api.themoviedb.org/3/search/movie"</span><span style="color:#D4D4D4;">,</span>
+        <span style="color:#9CDCFE;">json</span><span style="color:#D4D4D4;">=</span><span style="color:#D4D4D4;">{</span><span style="color:#CE9178;">"results"</span><span style="color:#D4D4D4;">:</span> <span style="color:#D4D4D4;">[{</span><span style="color:#CE9178;">"title"</span><span style="color:#D4D4D4;">:</span> <span style="color:#CE9178;">"Milk"</span><span style="color:#D4D4D4;">,</span> <span style="color:#CE9178;">"id"</span><span style="color:#D4D4D4;">:</span> <span style="color:#B5CEA8;">7508</span><span style="color:#D4D4D4;">}]},</span>
+        <span style="color:#9CDCFE;">status</span><span style="color:#D4D4D4;">=</span><span style="color:#B5CEA8;">200</span><span style="color:#D4D4D4;">,</span>
+    <span style="color:#D4D4D4;">)</span>
+
+    <span style="color:#6A9955;"># Act</span>
+    <span style="color:#9CDCFE;">matches</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">Movie</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">find_in_tmdb</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"Milk"</span><span style="color:#D4D4D4;">)</span>
+
+    <span style="color:#6A9955;"># Assert</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">len</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">)</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">1</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">matches</span><span style="color:#D4D4D4;">[</span><span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">].</span><span style="color:#9CDCFE;">title</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"Milk"</span></pre>
+  </div>
+
+  <p>From an integration-testing standpoint, <code>responses</code> is the most realistic
+  way to test interactions with a remote service, because the stubbed behavior is
+  "farthest away" &mdash; we are stubbing as late as possible in the flow of the request.
+  Therefore, when creating Behave/pytest-bdd scenarios to test external service
+  integration, this approach is usually the right choice. From a pure unit-testing point
+  of view (as in Section 3), it's less compelling, since we are concerned with the correct
+  behavior of specific functions, and we don't mind stubbing "close by" in order to observe
+  those behaviors in a controlled environment.</p>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>To create <strong>Fast</strong> and <strong>Repeatable</strong> test cases for
+      code that communicates with an external service, we use stubs to mimic the
+      service's behavior. Test classes or fixtures can group tests that exercise
+      different behaviors of the remote service.</li>
+      <li>The question of "where to stub" an external service depends on the purpose of
+      the test. Stubbing "far away" using a library like <code>responses</code> is more
+      realistic and appropriate for functional or integration tests; stubbing "close by"
+      in the model or library that communicates with the remote service is often adequate
+      for low-level unit tests.</li>
+    </ul>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.4.1</div>
+    <p>Is "stubbing the Internet" in conflict with the advice of Module 2 that one should
+    avoid mocks or stubs in full-system Behave/pytest-bdd scenarios?</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    Full-system testing should avoid "faking" most parts of the application, as we have
+    largely avoided doing using seams in this module. However, if the "full system"
+    includes interacting with outside services we don't control, such as the interaction
+    with TMDb in this example, we do need a way to "fake" their behavior for testing.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 5 — FIXTURES AND FACTORIES
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s5">5. Fixtures and Factories</h1>
+
+  <p>Doubles are appropriate when you need a stand-in with a small amount of functionality
+  to isolate the code under test from its dependencies. But suppose you were testing a new
+  method of class <code>Movie</code> called <code>name_with_rating</code> that returns a
+  nicely formatted string showing a movie's title and rating.</p>
+
+  <p>Clearly, such a method would have to access the <code>title</code> and
+  <code>rating</code> attributes of a <code>Movie</code> instance. You <em>could</em> create
+  a double that knows all that information:</p>
+
+  <div style="margin:16px 0 24px;">
+    <pre style="margin:0;border-radius:8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_name_with_rating_using_a_double</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#9CDCFE;">fake_movie</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">Mock</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"Casablanca"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">rating</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"PG"</span><span style="color:#D4D4D4;">)</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">Movie</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">name_with_rating</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">fake_movie</span><span style="color:#D4D4D4;">)</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"Casablanca (PG)"</span></pre>
+  </div>
+
+  <p>But since the method being tested is part of the <code>Movie</code> class itself, it
+  makes sense to use a <strong>real object</strong> here, since this isn't a case of
+  isolating the test code from collaborator classes.</p>
+
+  <h2>5.1 Factories: Quickly Creating "Real" Objects</h2>
+
+  <p>Where can we get a real <code>Movie</code> instance to use in such a test? Most
+  testing frameworks for object-oriented languages support the use of <strong>factories</strong>
+  &mdash; bits of code or declarative descriptions of objects designed to allow rapid
+  creation of full-featured objects (rather than mocks) at testing time.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; The Goal of a Factory</div>
+    <p style="margin:0;">The goal of a factory is to quickly create <strong>valid
+    instances</strong> of a class using some default attributes that you can selectively
+    override for testing. For example, if you were testing some code that allows a user
+    to write a review for a movie, you might need a valid movie instance to pass to that
+    code. You don't care what the movie's release date is, or who directed it &mdash; you
+    just need a movie object that is valid and whose title and rating you do know.</p>
+  </div>
+
+  <p style="font-size:0.9em;color:var(--text-muted);">Don't confuse this use of the term
+  "factory" with the Abstract Factory design pattern discussed in Module 6 &mdash; they
+  are unrelated concepts that happen to share a name.</p>
+
+  <p>You might think this seems like more work than just creating a movie instance directly
+  by calling its constructor. In our simple example, that may be true. But there are two
+  cases in which factories really shine:</p>
+
+  <ol>
+    <li><strong>Objects with many required attributes.</strong> The object to be created
+    has many attributes that must be initialized at creation time, even though any
+    particular test case may only care about the specific values of a few of them. The app
+    may have validations requiring a movie to have a valid release date or other fields
+    meeting specific criteria, yet the test above doesn't care about the values of those
+    other fields. In such cases, you can ask the factory to create an object in which
+    certain attribute values are specified but others are filled in with valid
+    defaults.</li>
+    <li><strong>Objects with relationships.</strong> Objects you need to create have
+    has-many or belongs-to relationships with other objects, as Module 5 describes. For
+    example, if a <code>Review</code> belongs to a <code>Movie</code>, and you are creating
+    a set of tests to check various behaviors of a <code>Review</code>, you literally
+    cannot create a valid <code>Review</code> instance without creating a
+    <code>Movie</code> instance for it to belong to, even if the tests you are writing
+    don't care about the movie itself. In this case, the <code>Review</code> factory can be
+    configured so that creating a <code>Review</code> also creates a valid
+    <code>Movie</code> to which it belongs.</li>
+  </ol>
+
+  <h2>5.2 Factory Boy: The Python Equivalent of FactoryBot</h2>
+
+  <p>The Python library <strong><code>factory_boy</code></strong> lets you define a factory
+  for any kind of model in your app and create just the objects you need quickly for each
+  test, selectively overriding only certain attributes.</p>
+
+  <div style="margin:16px 0 24px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; tests/factories.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">factory</span>
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">datetime</span> <span style="color:#569CD6;">import</span> <span style="color:#DCDCAA;">timedelta</span>
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">django.utils</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">timezone</span>
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">.models</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">Movie</span>
+
+
+<span style="color:#569CD6;">class</span> <span style="color:#4EC9B0;">MovieFactory</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">factory</span><span style="color:#D4D4D4;">.</span><span style="color:#4EC9B0;">django</span><span style="color:#D4D4D4;">.</span><span style="color:#4EC9B0;">DjangoModelFactory</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">class</span> <span style="color:#4EC9B0;">Meta</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#9CDCFE;">model</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">Movie</span>
+
+    <span style="color:#9CDCFE;">title</span> <span style="color:#D4D4D4;">=</span> <span style="color:#CE9178;">"A Fake Title"</span>          <span style="color:#6A9955;"># default values</span>
+    <span style="color:#9CDCFE;">rating</span> <span style="color:#D4D4D4;">=</span> <span style="color:#CE9178;">"PG"</span>
+    <span style="color:#9CDCFE;">release_date</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">factory</span><span style="color:#D4D4D4;">.</span><span style="color:#4EC9B0;">LazyFunction</span><span style="color:#D4D4D4;">(</span>
+        <span style="color:#569CD6;">lambda</span><span style="color:#D4D4D4;">:</span> <span style="color:#9CDCFE;">timezone</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">now</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">-</span> <span style="color:#DCDCAA;">timedelta</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">days</span><span style="color:#D4D4D4;">=</span><span style="color:#B5CEA8;">3650</span><span style="color:#D4D4D4;">)</span>  <span style="color:#6A9955;"># 10 years ago</span>
+    <span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <div style="margin:16px 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; tests/test_movie.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">.factories</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">MovieFactory</span>
+
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_name_with_rating_includes_title_and_rating</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#6A9955;"># build() creates but doesn't save; create() also saves to the database</span>
+    <span style="color:#9CDCFE;">movie</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">MovieFactory</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">build</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"Milk"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">rating</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"R"</span><span style="color:#D4D4D4;">)</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">movie</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">name_with_rating</span><span style="color:#D4D4D4;">()</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"Milk (R)"</span></pre>
+  </div>
+
+  <p>Using factories rather than fixtures preserves <strong>Independence</strong> among
+  tests &mdash; each test builds exactly the object it needs, with no hidden dependency on
+  shared state.</p>
+
+  <h2>5.3 Fixtures: Pre-Loaded "Known Good" Objects</h2>
+
+  <p>In database-backed apps, another source of "real" objects for use in tests is
+  <strong>fixtures</strong> &mdash; a set of objects whose existence is guaranteed and
+  fixed, and can be assumed by all test cases.</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#127981; Where the Term Comes From</div>
+    <p style="margin:0;">The term <strong>fixture</strong> comes from the manufacturing
+    world: a test fixture is a device that holds or supports the item under test. Since
+    all state in a database-backed app is kept in the database, a fixture file defines a
+    set of objects that is automatically loaded into the test database before tests are
+    run, so you can use those objects in your tests without first setting them up.</p>
+  </div>
+
+  <p>In pytest, the term <strong>"fixture"</strong> has a broader and more general
+  meaning than the database-loading fixtures described above: a pytest fixture is any
+  function decorated with <code>@pytest.fixture</code> that provides a piece of test setup
+  (data, a connection, a temporary file, and so on) to the test functions that request
+  it.</p>
+
+  <div style="margin:16px 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; conftest.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">pytest</span>
+<span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">.factories</span> <span style="color:#569CD6;">import</span> <span style="color:#9CDCFE;">MovieFactory</span>
+
+
+<span style="color:#569CD6;">@pytest.fixture</span>
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">hamilton</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">db</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#6A9955;"># Returns a known, valid Movie instance saved to the test database</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">MovieFactory</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">create</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">title</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"Hamilton"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">rating</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">"PG-13"</span><span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <div style="margin:16px 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; test_movie.py &mdash; using the fixture
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_hamilton_has_correct_rating</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">hamilton</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">hamilton</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">rating</span> <span style="color:#D4D4D4;">==</span> <span style="color:#CE9178;">"PG-13"</span></pre>
+  </div>
+
+  <h2>5.4 Use Fixtures Sparingly</h2>
+
+  <div class="box box-warn">
+    <div class="box-title">&#9888;&#65039; The Independence Tradeoff</div>
+    <p style="margin:0;">Unless used carefully, fixtures can interfere with tests being
+    <strong>Independent</strong>, as every test now depends implicitly on the fixture
+    state &mdash; so changing the fixtures might change the behavior of tests. In
+    addition, although any given test probably relies on only one or two fixtures, the
+    union of fixtures required by all tests can become unwieldy. Therefore, fixtures
+    should be used <strong>very sparingly</strong> if at all, and primarily for truly
+    fixed data that, in production, would also be fixed and rarely change.</p>
+  </div>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>When the SUT is itself an instance method (not a collaborator), use a
+      <strong>real object</strong> rather than a double.</li>
+      <li><strong>Factories</strong> (<code>factory_boy</code> in Python) let you create
+      valid instances quickly, overriding only the attributes a particular test cares
+      about, while filling in everything else with valid defaults. This is especially
+      valuable for objects with many required attributes or with belongs-to/has-many
+      relationships.</li>
+      <li>Database <strong>fixtures</strong> pre-load known-good data into the test
+      database, but should be used sparingly because they create implicit dependencies
+      across tests and can compromise <strong>Independence</strong>.</li>
+      <li>Factories generally preserve test independence better than fixtures, because
+      each test builds exactly what it needs.</li>
+    </ul>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 6 — COVERAGE & TYPES OF TESTS
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s6">6. Coverage Concepts and Types of Tests</h1>
+
+  <h2>6.1 How Much Testing is Enough?</h2>
+
+  <p>A poor but unfortunately widely-given answer is <em>"As much as you can before the
+  release deadline."</em> A very coarse-grained alternative is the
+  <strong>code-to-test ratio</strong>: the number of non-comment lines of code divided by
+  the number of lines of tests of all types. In production systems, this ratio is usually
+  less than 1 &mdash; that is, there are more lines of test than lines of app code.</p>
+
+  <p>Another widely-used metric, more conservative, is <em>"when the rate of new bug
+  reports falls below some threshold."</em> This formulation acknowledges that while code
+  can never be proven bug-free, bugs are getting harder to find. But a more precise way to
+  approach the question is to combine such metrics with <strong>code coverage</strong>.</p>
+
+  <h2>6.2 A Running Example</h2>
+
+  <p>Consider this small Python class, which we'll use to illustrate coverage concepts:</p>
+
+  <div style="margin:16px 0 28px;">
+    <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+                border-radius:8px 8px 0 0;">
+      &#128196; my_class.py
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">class</span> <span style="color:#4EC9B0;">MyClass</span><span style="color:#D4D4D4;">:</span>
+    <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">foo</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">self</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">x</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">y</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">z</span><span style="color:#D4D4D4;">):</span>
+        <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">x</span><span style="color:#D4D4D4;">:</span>
+            <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">y</span> <span style="color:#569CD6;">and</span> <span style="color:#9CDCFE;">z</span><span style="color:#D4D4D4;">:</span>
+                <span style="color:#9CDCFE;">self</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">bar</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">)</span>
+        <span style="color:#569CD6;">else</span><span style="color:#D4D4D4;">:</span>
+            <span style="color:#9CDCFE;">self</span><span style="color:#D4D4D4;">.</span><span style="color:#DCDCAA;">bar</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1</span><span style="color:#D4D4D4;">)</span>
+
+    <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">bar</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">self</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">x</span><span style="color:#D4D4D4;">):</span>
+        <span style="color:#9CDCFE;">self</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">w</span> <span style="color:#D4D4D4;">=</span> <span style="color:#9CDCFE;">x</span></pre>
+  </div>
+
+  <h2>6.3 The Coverage Hierarchy</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%;">Level</th>
+        <th>Definition</th>
+        <th>What it takes to satisfy it for <code>MyClass</code></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>S0</strong> &mdash; Method coverage</td>
+        <td>Is every method executed at least once by the test suite?</td>
+        <td>Call <code>foo</code> and <code>bar</code> at least once each</td>
+      </tr>
+      <tr>
+        <td><strong>S1</strong> &mdash; Call / Entry-Exit coverage</td>
+        <td>Has each method been called from every place it could be called?</td>
+        <td>Call <code>bar</code> from both inside <code>foo</code>'s <code>if</code>
+        branch and from its <code>else</code> branch</td>
+      </tr>
+      <tr>
+        <td><strong>C0</strong> &mdash; Statement coverage</td>
+        <td>Is every statement of the source code executed at least once, counting both
+        branches of a conditional as a single statement?</td>
+        <td>In addition to calling <code>bar</code>, call <code>foo</code> at least once
+        with <code>x</code> true (otherwise the statement that calls <code>bar(0)</code>
+        is never executed), and at least once with <code>y</code> false</td>
+      </tr>
+      <tr>
+        <td><strong>C1</strong> &mdash; Branch coverage</td>
+        <td>Has each branch been taken in each direction at least once?</td>
+        <td>Call <code>foo</code> with both <code>False</code> and <code>True</code>
+        values of <code>x</code>, and with values of <code>y</code> and <code>z</code>
+        such that <code>y and z</code> evaluates once to <code>True</code> and once to
+        <code>False</code></td>
+      </tr>
+      <tr>
+        <td><strong>C2</strong> &mdash; Path coverage</td>
+        <td>Has every possible route through the code been executed?</td>
+        <td>In this example, with <code>x</code>, <code>y</code>, <code>z</code> treated
+        as booleans, there are <strong>8 possible paths</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box box-note">
+    <div class="box-title">&#128270; Decision Coverage &mdash; Stricter Than C1</div>
+    <p style="margin:0;">A more stringent condition, <strong>decision coverage</strong>,
+    requires that each subexpression that independently affects a conditional expression
+    be evaluated to true and false. In this example, a test would additionally have to
+    separately set <code>y</code> and <code>z</code> so that the condition
+    <code>y and z</code> fails once for <code>y</code> being false and once for
+    <code>z</code> being false.</p>
+  </div>
+
+  <div class="box box-note">
+    <div class="box-title">&#127942; Modified Condition/Decision Coverage (MC/DC)</div>
+    <p style="margin:0 0 8px;">MC/DC is a stricter standard used in aviation and
+    safety-critical software (required by the FAA for flight software). In plain terms,
+    it demands that for every boolean condition in a decision, you must have a test that
+    shows <em>that specific condition</em> is the one making the difference &mdash; not
+    some combination of conditions happening to produce the right result.</p>
+    <p style="margin:0 0 6px;"><strong>Example:</strong> for the condition
+    <code>if age &gt;= 18 and has_id:</code>, MC/DC requires at least one test where
+    flipping only <code>age &gt;= 18</code> changes the outcome (to prove it matters
+    independently), and another test where flipping only <code>has_id</code> changes the
+    outcome. Formally it requires: every entry/exit point invoked at least once, every
+    decision taking all possible outcomes at least once, and each condition independently
+    shown to affect its decision's outcome.</p>
+  </div>
+
+  <h2>6.4 How Much Coverage Is Achievable?</h2>
+
+  <p>Achieving <strong>C0</strong> coverage is relatively straightforward, and a goal of
+  100% C0 coverage is not unreasonable. Achieving <strong>C1</strong> coverage is more
+  difficult since test cases must be constructed more carefully to ensure each branch is
+  taken at least once in each direction. <strong>C2</strong> coverage is most difficult of
+  all, and not all testing experts agree on the additional value of achieving 100% path
+  coverage.</p>
+
+  <div class="box box-green">
+    <div class="box-title">&#128161; The Real Value of Coverage Statistics</div>
+    <p style="margin:0;">Code coverage statistics are most valuable to the extent that
+    they <strong>highlight under-tested or untested parts of the code</strong> and show
+    the overall comprehensiveness of your test suite &mdash; not as a "score" to chase to
+    100%.</p>
+  </div>
+
+  <h2>6.5 Measuring Coverage in Python: <code>coverage.py</code></h2>
+
+  <p>In Ruby, the <code>SimpleCov</code> gem measures and displays C0 and C1 coverage. The
+  Python equivalent is <strong><code>coverage.py</code></strong>, usually run via the
+  <code>pytest-cov</code> plugin.</p>
+
+  <div style="margin:16px 0 24px;">
+    <div style="background:#1F4E79;padding:9px 16px;display:flex;
+                align-items:center;gap:10px;border-radius:8px 8px 0 0;">
+      <span style="color:#fff;font-weight:600;">Install and run</span>
+    </div>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:14px 18px;
+                font-size:13.5px;background:#1E1E1E;"><span style="color:#4EC9B0;">pip install</span> <span style="color:#CE9178;">pytest-cov</span>
+
+<span style="color:#4EC9B0;">pytest</span> <span style="color:#CE9178;">--cov=myapp --cov-report=term-missing</span></pre>
+  </div>
+
+  <p>This produces a report showing, file by file, what fraction of statements were
+  executed (C0) and which specific line numbers were missed &mdash; letting you browse
+  exactly which lines of your app were exercised by your test suite.</p>
+
+  <h2>6.6 Unit, Functional, and System/Integration Tests</h2>
+
+  <p>This module, and the above discussion of coverage, have focused on <strong>unit
+  tests</strong>. Module 2 explained how user stories could become automated acceptance
+  tests; we can think of a Behave/pytest-bdd scenario as both a <strong>system test</strong>
+  (because it exercises code in many different parts of the application in the same way a
+  user would) and an <strong>acceptance test</strong> (because a properly-written scenario
+  reflects and verifies the behavior the user said they wanted).</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#127760; Full-Stack Tests</div>
+    <p style="margin:0;">In SaaS, such tests may also be called <strong>full-stack
+    tests</strong>, since a typical scenario exercises every part of the app from the
+    browser-based UI to the database. Unlike unit tests, system tests rarely rely on test
+    doubles to isolate behavior; on the contrary, the goal is to simulate real users as
+    closely as possible.</p>
+  </div>
+
+  <p>Any test that covers more than one method but is not a full-stack test is generically
+  an <strong>integration test</strong>. For example, a pytest test of a Django view would
+  probably stub out calls to the database and bypass the routing mechanism, neither of
+  which is central to testing the view itself, but would probably include interactions
+  with mechanisms such as parsing form input, which clearly are outside the view function
+  itself.</p>
+
+  <p>System and integration tests are important, but insufficient. Their resolution is
+  poor: if an integration test fails, it is harder to pinpoint the cause since the test
+  touches many parts of the code. Especially for system tests, coverage also tends to be
+  poor because even though a single scenario touches many classes, it executes only a few
+  code paths in each class. For the same reason, system and integration tests also tend to
+  take longer to run. On the other hand, while unit tests run quickly and can isolate the
+  subject code with great precision &mdash; improving both coverage resolution and error
+  localization &mdash; because they rely on fake objects to isolate the subject code, they
+  may mask problems that would only arise in integration tests. <strong>In other words,
+  high assurance requires both good coverage and a mix of all three kinds of
+  tests.</strong></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Unit</th>
+        <th>Functional</th>
+        <th>System / Integration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>What is tested</strong></td>
+        <td>One method / class</td>
+        <td>Several methods / classes</td>
+        <td>Large chunks of system</td>
+      </tr>
+      <tr>
+        <td><strong>Running time</strong></td>
+        <td>Very fast</td>
+        <td>Fairly fast</td>
+        <td>Slow</td>
+      </tr>
+      <tr>
+        <td><strong>Error localization</strong></td>
+        <td>Excellent</td>
+        <td>Moderate</td>
+        <td>Poor</td>
+      </tr>
+      <tr>
+        <td><strong>Coverage</strong></td>
+        <td>Excellent</td>
+        <td>Moderate</td>
+        <td>Poor</td>
+      </tr>
+      <tr>
+        <td><strong>Use of doubles</strong></td>
+        <td>Frequently</td>
+        <td>Occasionally</td>
+        <td>Rarely / never</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>6.7 Beyond Correctness: Other Flavors of Tests</h2>
+
+  <p>We have focused on testing for correctness ("did you build the thing right"), but in
+  practice, other flavors of tests are part of any comprehensive test suite:</p>
+
+  <ul>
+    <li><strong>Smoke test</strong> &mdash; a minimal attempt to operate the software, to
+    see whether anything is obviously wrong before running the rest of the test suite. For
+    example, if a low-level coding error prevents a SaaS app from displaying its home page
+    or accepting logins, there is no point in running further tests.</li>
+    <li><strong>Compatibility testing</strong> &mdash; less prominent in SaaS since the app
+    developers control the server environment, but may still be important for testing the
+    app's UI in different browsers. Services like SauceLabs support running SaaS
+    integration tests on a variety of browsers and operating systems, and even capture a
+    screencast of each run.</li>
+    <li><strong>Regression testing</strong> &mdash; ensures that previously-fixed bugs do
+    not reappear. (Covered further in Module 5.)</li>
+    <li><strong>Performance, stress, and security testing</strong> &mdash; types of
+    non-functional testing that ensure the software meets operational criteria,
+    particularly important for SaaS. (Covered further in Module 7.)</li>
+    <li><strong>Accessibility testing</strong> &mdash; ensures that the software is usable
+    by persons with disabilities. In SaaS, accessibility testing focuses primarily on the
+    client-side user experience.</li>
+  </ul>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>Static and dynamic measures of coverage &mdash; including
+      <strong>code-to-test ratio</strong>, <strong>C0</strong> or <strong>C1</strong>
+      coverage (reported by <code>pytest-cov</code> / <code>coverage.py</code>), and
+      <strong>C2</strong> coverage &mdash; measure the extent to which your test suite
+      exercises different paths in your code.</li>
+      <li>Rather than setting "hard targets" for coverage levels, use coverage reports to
+      identify under-tested parts of your app so you can enhance the test suite
+      accordingly.</li>
+      <li><strong>Unit</strong>, <strong>integration</strong>, and
+      <strong>system/acceptance</strong> tests differ in terms of their running time,
+      resolution (ability to localize errors), ability to exercise a variety of code
+      paths, and ability to perform a "reasonableness check," or so-called
+      <strong>smoke test</strong>, on the whole application. All three are vital to
+      software assurance.</li>
+      <li>In addition to functional tests that check correctness, we also need
+      <strong>non-functional tests</strong> for accessibility, compatibility, security,
+      and performance.</li>
+    </ul>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.7.1</div>
+    <p>Why does high test coverage <em>not</em> necessarily imply a well-tested
+    application?</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    Coverage says nothing about the quality of the tests. However, low coverage certainly
+    implies a poorly-tested application.</p>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.7.2</div>
+    <p>What is the difference between C0 code coverage and code-to-test ratio?</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    C0 coverage is a <strong>dynamic</strong> measurement of what fraction of all
+    statements are executed by a test suite. Code-to-test ratio is a <strong>static</strong>
+    measurement comparing the total number of lines of code to the total number of lines
+    of tests.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 7 — OTHER TESTING APPROACHES
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s7">7. Other Testing Approaches and Terminology</h1>
+
+  <p>The field of software testing is as broad and long-lived as software engineering and
+  has its own literature. Its range of techniques includes formalisms for proving things
+  about coverage, empirical techniques for selecting which tests to create, and
+  directed-random testing. Depending on an organization's "testing culture," you may hear
+  different terminology than we've used in this module.</p>
+
+  <h2>7.1 Covering a Graph of Possible Behaviors</h2>
+
+  <p>One useful way to think about code is to divide it into <strong>basic
+  blocks</strong> &mdash; each of which executes from beginning to end with no possibility
+  of branching &mdash; and then join these basic blocks into a graph in which conditionals
+  result in graph nodes with multiple out-edges. We can then think of testing as
+  <strong>"covering the graph"</strong>: each test case tracks which nodes in the graph it
+  visits, and the fraction of all nodes visited at the end of the test suite is the test
+  coverage.</p>
+
+  <p>One insight that emerges from this approach is that the levels of testing described
+  in Section 6 refer to <strong>control flow coverage</strong>, since they are only
+  concerned with whether specific parts of the code are executed or not.</p>
+
+  <h2>7.2 Define&ndash;Use (DU) Coverage</h2>
+
+  <div class="box box-note">
+    <div class="box-title">&#128290; Definition: DU-Coverage (Define-Use Coverage)</div>
+    <p style="margin:0 0 8px;">Every time a variable gets assigned a value, that is a
+    <strong>define</strong>. Every time the variable's value is actually read and used,
+    that is a <strong>use</strong>. DU-coverage asks: <em>have your tests exercised every
+    possible define-then-use pair?</em></p>
+    <p style="margin:0 0 6px;"><strong>Simple example:</strong></p>
+    <div style="background:#1E1E1E;border-radius:6px;padding:12px 16px;font-family:'Courier New',monospace;font-size:13px;line-height:1.8;margin:0 0 8px;">
+      <span style="color:#9CDCFE;">discount</span> <span style="color:#D4D4D4;">=</span> <span style="color:#B5CEA8;">0</span>          <span style="color:#6A9955;"># DEFINE (1st assignment)</span><br>
+      <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">is_member</span><span style="color:#D4D4D4;">:</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#9CDCFE;">discount</span> <span style="color:#D4D4D4;">=</span> <span style="color:#B5CEA8;">10</span>      <span style="color:#6A9955;"># DEFINE (2nd assignment)</span><br>
+      <span style="color:#DCDCAA;">apply_discount</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">discount</span><span style="color:#D4D4D4;">)</span>  <span style="color:#6A9955;"># USE</span>
+    </div>
+    <p style="margin:0;">DU-coverage requires tests that exercise <em>both</em> possible
+    define&rarr;use paths: one where <code>is_member</code> is <code>False</code>
+    (discount stays 0 &rarr; used), and one where it is <code>True</code> (discount becomes
+    10 &rarr; used). A test suite that only tests <code>is_member = True</code> has
+    incomplete DU-coverage &mdash; and might miss a bug in the default
+    <code>discount = 0</code> path.</p>
+  </div>
+
+  <h2>7.3 Black-Box vs. White-Box Testing</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:50%">Black-Box (Functional) Tests</th>
+        <th style="width:50%">White-Box (Glass-Box) Tests</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Design is based <strong>solely on the software's external
+        specifications</strong></td>
+        <td>Design reflects knowledge about the software's <strong>implementation</strong>
+        that is not implied by external specifications</td>
+      </tr>
+      <tr>
+        <td>Example: for a hash table, specify a random set of key/value pairs to test
+        that storing then reading a key returns the stored value</td>
+        <td>Example: exploit knowledge of the hash function to construct worst-case test
+        data that results in many hash collisions; focus on
+        <strong>boundary values</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>7.4 Mutation Testing</h2>
+
+  <div class="box box-note">
+    <div class="box-title">&#129516; Definition: Mutation Testing</div>
+    <p style="margin:0 0 8px;">Invented by Ammann and Offutt, <strong>mutation
+    testing</strong> is a technique where an automated tool makes small, syntactically
+    legal changes to your source code &mdash; called <strong>mutations</strong> &mdash;
+    and then runs your test suite against each mutated version. If a mutation causes no
+    test to fail, your tests have a gap.</p>
+    <p style="margin:0 0 6px;"><strong>Example:</strong> Suppose your code is:</p>
+    <div style="background:#1E1E1E;border-radius:6px;padding:10px 16px;font-family:'Courier New',monospace;font-size:13px;line-height:1.8;margin:0 0 8px;">
+      <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">is_adult</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">age</span><span style="color:#D4D4D4;">):</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">age</span> <span style="color:#D4D4D4;">&gt;=</span> <span style="color:#B5CEA8;">18</span>
+    </div>
+    <p style="margin:0 0 4px;">A mutation tool might change <code>&gt;=</code> to
+    <code>&gt;</code>, producing:</p>
+    <div style="background:#1E1E1E;border-radius:6px;padding:10px 16px;font-family:'Courier New',monospace;font-size:13px;line-height:1.8;margin:0 0 8px;">
+      <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">is_adult</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">age</span><span style="color:#D4D4D4;">):</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">age</span> <span style="color:#D4D4D4;"><span style="color:#F44747;">&gt;</span></span> <span style="color:#B5CEA8;">18</span>  <span style="color:#6A9955;"># mutated: &gt;= changed to &gt;</span>
+    </div>
+    <p style="margin:0;">If none of your tests passes <code>age = 18</code>, this mutation
+    survives &mdash; meaning your tests would <em>not</em> catch a real bug where someone
+    aged exactly 18 is incorrectly denied adult access. Python's
+    <code>mutmut</code> library automates this process.</p>
+  </div>
+
+  <h2>7.5 Fuzz Testing</h2>
+
+  <p><strong>Fuzz testing</strong> consists of throwing random data at your application and
+  seeing what breaks. In 2014, Google engineers reported that over a 2-year period, fuzz
+  testing had helped find over 1,000 bugs in the open-source video-processing utility
+  <code>ffmpeg</code>. Fuzz testing has been particularly useful for finding
+  <strong>security vulnerabilities</strong> that are missed by both manual code inspection
+  and formal analysis, including stack and buffer overflows and unchecked null pointers.</p>
+
+  <p>While such memory bugs do not arise in interpreted languages like Python, or in
+  type-safe and memory-safe compiled languages such as Rust, fuzz testing can still find
+  interesting bugs in SaaS apps:</p>
+
+  <ul>
+    <li><strong>Random / black-box fuzzing</strong> &mdash; either generates completely
+    random data or randomly mutates valid input data, such as changing certain bytes of
+    metadata in a JPEG image to test the robustness of the image decoder.</li>
+    <li><strong>Smart fuzzing</strong> &mdash; incorporates knowledge about the app's
+    structure and possibly a way to specify how to construct "realistic but fake" fuzz
+    data. For example, smart-fuzzing SaaS might include randomizing the variables and
+    values occurring in form postings or URIs, or attempting various cross-site scripting
+    or SQL injection attacks (Module 7).</li>
+    <li><strong>White-box fuzzing</strong> &mdash; uses symbolic execution, which simulates
+    execution of a program, observing the conditions under which each branch is taken or
+    not, then generates fuzzed inputs to exercise the branch paths not taken during the
+    simulated execution. White-box fuzzing can theoretically provide C2 (all paths)
+    coverage, but in practice the size of the search space is huge, and white-box fuzzing
+    relies on a diverse set of "seed inputs" to be effective.</li>
+  </ul>
+
+  <p style="font-size:0.9em;color:var(--text-muted);">In Python, the
+  <code>hypothesis</code> library brings property-based / fuzz-style testing into the
+  pytest ecosystem, generating many randomized inputs to a function and checking that
+  invariants hold across all of them.</p>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <p style="margin:0;">We can think of testing as "covering a graph" of possible
+    software behaviors. The graph can represent <strong>control flow</strong> (basic block
+    coverage), <strong>variable assignment and usage</strong> (DU-coverage), a
+    <strong>space of random inputs</strong> (fuzz testing), or a <strong>space of possible
+    tests with respect to specific errors</strong> in the code (mutation testing). The
+    different approaches are complementary and tend to catch different types of bugs.</p>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label">&#10067; Self-Check 8.8.1</div>
+    <p>The Microsoft Zune music player had an infamous bug that caused all Zunes to "lock
+    up" on December 31, 2008. Later analysis showed that the bug would be triggered on the
+    last day of any leap year. What kinds of tests &mdash; black-box, glass-box, mutation,
+    or fuzz &mdash; would have been likely to catch this bug?</p>
+    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
+    A glass-box test for the special code paths used for leap years would have been
+    effective. Fuzz testing might have been effective: since the bug occurs roughly once
+    in every 1460 days, a few thousand fuzz tests would likely have found it.</p>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 8 — PLAN-AND-DOCUMENT PERSPECTIVE
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s8">8. The Plan-and-Document Perspective on Testing</h1>
+
+  <p>The project manager takes the Software Requirements Specification from the
+  requirements planning phase and divides it into individual program units. Developers
+  then write the code for each unit, and then perform unit tests to make sure they work.
+  In many organizations, quality assurance staff perform the rest of the higher-level
+  tests, such as module, integration, system, and acceptance tests.</p>
+
+  <h2>8.1 Integration Strategies</h2>
+
+  <p>There are three options for how to integrate the units and perform integration
+  tests:</p>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#0C447C;">
+      <span class="step-num" style="color:#0C447C;">1</span>
+      <span class="step-title">Top-down integration</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Starts with the top of the tree structure showing the
+      dependency among all the units. The advantage is that you quickly get some of the
+      high-level functions working, such as the user interface, which allows stakeholders
+      to offer feedback in time to make changes. The downside is that you have to create
+      many <strong>stubs</strong> to get the app to limp along in this nascent form.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#085041;">
+      <span class="step-num" style="color:#085041;">2</span>
+      <span class="step-title">Bottom-up integration</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Starts at the bottom of the dependency tree and works up. There
+      is no need for stubs, as you can integrate all the pieces you need for a module.
+      Alas, you don't get an idea how the app will look until you get all the code
+      written and integrated.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#412402;">
+      <span class="step-num" style="color:#412402;">3</span>
+      <span class="step-title">Sandwich integration</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Not surprisingly, tries to get the best of both worlds by
+      integrating from both ends simultaneously. Thus, you try to reduce the number of
+      stubs by selectively integrating some units bottom-up, and try to get the user
+      interface operational sooner by selectively integrating some units top-down.</p>
+    </div>
+  </div>
+
+  <h2>8.2 System Test and Validation</h2>
+
+  <p>The next step for the QA testers after integration tests is the <strong>system
+  test</strong>, as the full app should work. This is the last step before showing it to
+  customers for them to try out. System tests cover both <strong>non-functional</strong>
+  requirements, such as performance, and <strong>functional</strong> requirements of
+  features found in the SRS.</p>
+
+  <p>In the plan-and-document process, the final test is for the customers to try the
+  product in their environment to decide whether they will accept the product or not. That
+  is, the aim is <strong>validation</strong>, not just verification. In Agile development,
+  the customer is involved in trying prototypes of the app early in the process, so there
+  is no separate system test before running the acceptance tests.</p>
+
+  <h2>8.3 When Is Testing Complete?</h2>
+
+  <p>One question for plan-and-document is how to decide when testing is complete.
+  Typically, an organization will enforce a standard level of testing coverage before a
+  product is ready for the customer. Examples might be statement coverage (all statements
+  executed at least once), or all user input opportunities are tested with both good
+  input and problematic input.</p>
+
+  <!-- Dijkstra quote -->
+  <div class="quote-card">
+    <div class="quote-img-col">
+      <img src="edsger_dijkstra.jpg" alt="Portrait of Edsger W. Dijkstra" />
+    </div>
+    <div class="quote-col">
+      <div>
+        <div class="quote-mark">&ldquo;</div>
+        <p class="quote-text">
+          Program testing can be used to show the presence of bugs, but never to show
+          their absence!
+        </p>
+      </div>
+      <div class="quote-meta">
+        <div class="quote-name">Edsger W. Dijkstra (1930&ndash;2002)</div>
+        <div class="quote-role">
+          1972 Turing Award winner &mdash; fundamental contributions to developing
+          programming languages
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>8.4 Formal Methods</h2>
+
+  <p>Because testing alone can never prove the absence of bugs, there has been a great
+  deal of research investigating approaches to verification beyond testing. Collectively,
+  these techniques are known as <strong>formal methods</strong>. The general strategy is
+  to start with a <strong>formal specification</strong> and prove that the behavior of the
+  code follows the behavior of that spec. These are mathematical proofs, either done by a
+  person or done by a computer:</p>
+
+  <ul>
+    <li><strong>Automatic theorem proving</strong> &mdash; uses mathematical logic rules
+    to build a proof that the code is correct, the same way a mathematician proves a
+    theorem step by step. Think of it as asking: <em>"can I logically prove this code
+    never crashes?"</em> rather than just running tests hoping it doesn't.</li>
+    <li><strong>Model checking</strong> &mdash; exhaustively checks every possible state
+    the system can be in. For example, for a traffic-light controller with states
+    (red, amber, green), it would automatically verify that the light can never show
+    green in two directions at the same time &mdash; by trying every possible combination
+    of states. Practical for small, well-defined systems like hardware controllers or
+    network protocols; impractical for large apps because the number of states explodes.</li>
+  </ul>
+
+  <h2>8.5 Test Plan Documentation</h2>
+
+  <p>As you should expect from the plan-and-document process, documentation plays an
+  important role in testing. The figure below gives an outline for a test plan based on
+  <strong>IEEE Standard 829-2008</strong>:</p>
+
+  <div class="box box-note">
+    <div class="box-title">&#128196; Top-Level Test Plan Outline (IEEE Std 829-2008)</div>
+    <ol style="margin:8px 0 0 20px;line-height:1.8;">
+      <li>Introduction
+        <ol style="margin:4px 0 0 20px;" type="a">
+          <li>Document identifier</li>
+          <li>Scope</li>
+          <li>References</li>
+          <li>System overview and key features</li>
+          <li>Test overview (organization, schedule, integrity levels, resources,
+          responsibilities, tools/techniques/methods/metrics)</li>
+        </ol>
+      </li>
+      <li>Details of the Top-Level Test Plan
+        <ol style="margin:4px 0 0 20px;" type="a">
+          <li>Test processes including definition of test levels (management,
+          acquisition, supply, development, operation, maintenance)</li>
+          <li>Test documentation requirements</li>
+          <li>Test administration requirements</li>
+          <li>Test reporting requirements</li>
+        </ol>
+      </li>
+      <li>General
+        <ol style="margin:4px 0 0 20px;" type="a">
+          <li>Glossary</li>
+          <li>Document change procedures and history</li>
+        </ol>
+      </li>
+    </ol>
+  </div>
+
+  <h2>8.6 Plan-and-Document vs. Agile: Testing Tasks Compared</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:25%;">Task</th>
+        <th>In Plan-and-Document</th>
+        <th>In Agile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Test Plan and Documentation</strong></td>
+        <td>Software Test Documentation, such as IEEE Standard 829-2008</td>
+        <td>User stories</td>
+      </tr>
+      <tr>
+        <td><strong>Order of Coding and Testing</strong></td>
+        <td>
+          1. Code units<br/>
+          2. Unit test<br/>
+          3. Module test<br/>
+          4. Integration test<br/>
+          5. System test<br/>
+          6. Acceptance test
+        </td>
+        <td>
+          1. Acceptance test<br/>
+          2. Integration test<br/>
+          3. Module test<br/>
+          4. Unit test<br/>
+          5. Code units
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Testers</strong></td>
+        <td>Developers for unit tests; QA testers for module, integration, system, and
+        acceptance tests</td>
+        <td>Developers</td>
+      </tr>
+      <tr>
+        <td><strong>When Testing Stops</strong></td>
+        <td>Company policy (e.g., statement coverage, happy and sad user inputs)</td>
+        <td>All tests pass (green)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box box-green">
+    <div class="box-title">&#128221; Section Summary</div>
+    <ul style="margin:0 0 0 20px;">
+      <li>Testing and formal methods reduce the risks of errors in designs.</li>
+      <li>Unlike BDD/TDD, the plan-and-document process starts with writing code before
+      you write the tests. Developers then perform unit tests.</li>
+      <li>Especially in large projects, different people perform the higher-level tests.
+      Integration options for putting the units together are <strong>top-down</strong>,
+      <strong>bottom-up</strong>, or <strong>sandwich</strong>.</li>
+      <li>Testers do a separate <strong>system test</strong> to ensure the product passes
+      both functional and non-functional requirements before exposing it to customers for
+      the final acceptance test.</li>
+      <li><strong>Formal methods</strong> rely on formal specifications and automated
+      proofs or exhaustive state search to verify more than what testing can do, but they
+      are so expensive to perform that today they are only applicable to small, stable,
+      critical portions of hardware or software.</li>
+    </ul>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 9 — FALLACIES AND PITFALLS
+       ═══════════════════════════════════════════════════════ -->
+  <h1 id="s9">9. Fallacies and Pitfalls</h1>
+
+  <div class="box box-warn">
+    <div class="box-title">&#128679; Fallacy: 100% Test Coverage with All Tests Passing
+    Means No Bugs</div>
+    <p style="margin:0;">There are many reasons this statement can be false. Complete test
+    coverage says nothing about the <strong>quality</strong> of the individual tests. As
+    well, some bugs may require passing a certain value as a method argument (for example,
+    to trigger a divide-by-zero error), and control flow testing often cannot reveal such a
+    bug. There may be bugs in the interaction between your app and an external service such
+    as TMDb; stubbing out the service so you can perform local testing might mask such
+    bugs.</p>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">&#9888;&#65039; Pitfall: Dogmatically Insisting on 100% Test
+    Coverage (All Green) Before You Ship</div>
+    <p style="margin:0;">As we saw above, 100% test coverage is not only difficult to
+    achieve at levels higher than C1, but gives no guarantees of bug-freedom even if you
+    do achieve it. Test coverage is a useful tool for estimating the overall
+    comprehensiveness of your test suite, but high confidence requires a
+    <strong>variety</strong> of testing methods &mdash; integration as well as unit,
+    fuzzing as well as hand-constructed test cases, define&ndash;use coverage as well as
+    control-flow coverage, mutation testing to expose additional holes in the test
+    strategy, and so on. Operational issues such as security and performance call for
+    additional testing strategies beyond the correctness-oriented ones described in this
+    module.</p>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">&#128679; Fallacy: You Don't Need Much Test Code to Be
+    Confident in the Application</div>
+    <p style="margin:0;">While insisting on 100% coverage may be counterproductive, so is
+    going to the other extreme. In production systems, the code-to-test ratio is usually
+    less than 1 &mdash; that is, there are typically <strong>more lines of test code than
+    lines of application code</strong>. A small test suite, even one with high statement
+    coverage, is unlikely to exercise the variety of inputs, edge cases, and error
+    conditions that a real application encounters in production.</p>
+  </div>
+
+</body>
+</html>

@@ -422,31 +422,7 @@
        ═══════════════════════════════════════════════════════ -->
   <h1 id="s1">1. FIRST, TDD, and Red&ndash;Green&ndash;Refactor</h1>
 
-  <!-- Quote card: Maurice Wilkes -->
-  <div class="quote-card">
-    <div class="quote-img-col">
-      <img src="maurice_wilkes.jpg" alt="Portrait of Sir Maurice Wilkes" />
-    </div>
-    <div class="quote-col">
-      <div>
-        <div class="quote-mark">&ldquo;</div>
-        <p class="quote-text">
-          It was on one of my journeys between the EDSAC room and the punching
-          equipment that&hellip; the realization came over me with full force that a good
-          part of the remainder of my life was going to be spent finding errors in my
-          own programs.
-        </p>
-      </div>
-      <div class="quote-meta">
-        <div class="quote-name">Sir Maurice Wilkes (1913&ndash;2010)</div>
-        <div class="quote-role">
-          1967 Turing Award winner &mdash; designed and built EDSAC in 1949,
-          one of the first stored-program computers
-        </div>
-        <span class="quote-source">&#128218; Memoirs of a Computer Pioneer, 1985</span>
-      </div>
-    </div>
-  </div>
+  
 
   <h2>1.1 From Validation to Verification</h2>
 
@@ -484,8 +460,17 @@
 
   <h2>1.2 QA is a Shared Responsibility</h2>
 
-  <p>In Agile development, developers do not "toss their code over the wall" to a separate
-  Quality Assurance (QA) team. While most testing is expected to be automated, there is
+  <p>In Agile development, developers do not “toss their code over the wall” to the Quality
+Assurance (QA) team, nor do QA engineers extensively exercise the software manually and
+file bug reports. Instead, Agile developers bear far more responsibility for testing their own
+code and participating in reviews, while Agile QA responsibilities focus on improving the
+testing tools infrastructure, helping developers make their code more testable, and verifying
+
+that customer-reported bugs are reproducible. Further-
+more, in the vast majority of tests you will write, the test code itself can determine whether
+
+the code being tested works or not, without requiring a human to manually check test output
+or interact with the software.<br/>Even though Agile developers are expected to write their own tests, and those tests are expected to be automated, there is
   often a role for some manual testing:</p>
 
   <ul>
@@ -508,7 +493,7 @@
   <p>TDD advocates the use of <strong>tests to drive the development of code</strong>. When
   TDD is used to create new code, as in this module, it is sometimes referred to as
   <strong>test-first development</strong>. The basic TDD workflow, repeated for each
-  created test, is known as <strong>Red&ndash;Green&ndash;Refactor</strong>.</p>
+  created test, is known as <strong>Red&ndash;Green&ndash;Refactor</strong>. Red–Green–Refactor proceeds as follows:</p>
 
   <!-- Red-Green-Refactor cycle -->
   <div class="step-block">
@@ -686,17 +671,7 @@
     </ul>
   </div>
 
-  <div class="exercise">
-    <div class="exercise-label">&#10067; Self-Check 8.1.1</div>
-    <p>Suppose step 1 in your Cucumber/Behave scenario is passing, but step 2 is failing
-    because the code needed is not yet written. If you are practicing strict BDD and TDD,
-    explain why you will necessarily go through one or more cycles of
-    Red&ndash;Green&ndash;Refactor before step 2 passes.</p>
-    <p style="margin:8px 0 0;font-style:italic;color:var(--text-muted);">
-    If the code for step 2 does not yet exist, strict TDD says you should develop that
-    code by first writing a focused test for one aspect of the code's behavior, watching
-    that test fail, then writing the code to make it pass.</p>
-  </div>
+  
 
   <hr class="divider" />
 
@@ -729,18 +704,74 @@
       single method may be the subject of multiple test cases.</li>
     </ul>
   </div>
+  <div class="box box-note" style="margin:20px 0;">
+  <div class="box-title">&#128203; The Structure of a Unit Test</div>
+  <p style="margin:0 0 10px;">In this section (section-2) we focus on unit tests. A unit test is
+  conceptually simple: call a method, and verify some aspect of its behavior. <br/>But even
+  leaf methods usually require establishing some preconditions before exercising the code.
+  For example, when testing a method that combines two lists into a single sorted list,
+  we need to create the two lists that will be provided as input. We then exercise the
+  SUT, and finally check whether the particular behavior we were looking for was correctly
+  exhibited.</p>
+  <p style="margin:0 0 12px;">In general, every test case in a suite follows the same
+  three-part structure:</p>
 
+  <div style="display:flex;flex-direction:column;gap:10px;">
+
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--blue-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--blue-dark);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;
+                  padding:4px 12px;border-radius:20px;flex-shrink:0;
+                  margin-top:2px;">
+        1 &nbsp;ARRANGE
+      </div>
+      <p style="margin:0;font-size:0.93em;">Create any necessary
+      <strong>preconditions</strong> for the test case, such as setting values
+      of variables that affect the behavior of the SUT.</p>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--teal-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--teal);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;
+                  padding:4px 12px;border-radius:20px;flex-shrink:0;
+                  margin-top:2px;">
+        2 &nbsp;ACT
+      </div>
+      <p style="margin:0;font-size:0.93em;"><strong>Exercise the SUT</strong>
+      — call the method or trigger the behavior you are testing.</p>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--green-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--green-dark);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;
+                  padding:4px 12px;border-radius:20px;flex-shrink:0;
+                  margin-top:2px;">
+        3 &nbsp;ASSERT
+      </div>
+      <p style="margin:0;font-size:0.93em;"><strong>Verify</strong> that the
+      result or behavior matches what was expected.</p>
+    </div>
+
+  </div>
+</div>
   <h2>2.2 Choosing Input Values: Critical Points and Categories</h2>
 
-  <p>The goal of a single test case for some SUT is to check that some specific behavior
-  happens (for example, the return value of a function matches an expected result) or
-  doesn't happen (for example, passing an empty string to a string comparison function
-  doesn't result in an error or exception).</p>
+  <p>The only thing a test case needs to do is choose some inputs, call the
+method, and check the returned value. For example, consider a hypothetical method "leap"
+that accepts an integer and returns a truthy value if and only if that integer corresponds to
+a leap year (that is, it is either a multiple of 400, or a multiple of 4 but not 100). So, for
+example, 2000 and 2004 are leap years, but 1900 is not. Since exhaustive testing (trying
+every possible input) is clearly infeasible, how do we choose which input values to use for
+our test cases?</p>
 
-  <p>A good guideline is to use input values that would cause the calculation performed in
-  the method to follow <strong>different code paths</strong>. Consider a leap-year detector.
-  By inspection, we can deduce four categories of input that completely cover the space of
-  possible behaviors:</p>
+  <p> A good guideline in such cases is to use input values that would cause the calculation
+performed in the method to follow <strong>different code paths</strong>. Given the above rule for leap years, by inspection we can deduce four categories, as the following table shows:</p>
 
   <table>
     <thead>
@@ -779,7 +810,7 @@
 
   <h2>2.3 A "Pure" TDD Workflow for <code>is_leap_year()</code></h2>
 
-  <p>A "pure" TDD workflow for developing a function that detects leap years might proceed
+<p>A "pure" TDD workflow for developing a function that detects leap years might proceed
   as follows:</p>
 
   <ol>
@@ -791,56 +822,292 @@
     fails, modify <code>is_leap_year</code> so that now both tests pass.</li>
     <li>Continue until all categories are covered.</li>
   </ol>
-
-  <div class="box box-note">
-    <div class="box-title">&#128161; "Why Not Just Write the Whole Method at Once?"</div>
-    <p style="margin:0;"><code>is_leap_year</code> is such a simple leaf method, and its
-    functionality so well-circumscribed, that you might object that you could write the
-    entire method at once along with all four test cases, rather than going through
-    Red&ndash;Green&ndash;Refactor four separate times. For very simple leaf functions,
-    this objection has merit &mdash; but the discipline of writing one test at a time
-    scales to far more complex code, where it is not at all obvious what "the whole
-    method" should look like in advance.</p>
+<!-- ── STEP 1 ── -->
+<div style="border:1px solid var(--border);border-radius:10px;
+            overflow:hidden;margin:0 0 16px;">
+  <div style="background:#C62828;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#C62828;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;flex-shrink:0;">1</span>
+    <span style="color:#fff;font-weight:600;">
+      Category 1 &mdash; RED then GREEN: first test, first implementation
+    </span>
   </div>
+  <div style="padding:14px 18px;">
 
-  <h2>2.4 The Three Phases of a Test Case</h2>
-
-  <p>Each test case follows the same three-part structure:</p>
-
-  <div class="pill-row">
-    <div class="pill-card" style="background:#FAEEDA;border:1px solid #EF9F27;flex:1;">
-      <div class="pill-label" style="color:#412402;font-size:1.05rem;">Arrange</div>
-      <div style="font-size:0.8rem;color:#633806;margin-top:4px;">set up preconditions</div>
+    <!-- RED phase -->
+    <div style="display:flex;align-items:center;gap:8px;margin:0 0 8px;">
+      <span style="background:#C62828;color:#fff;font-size:0.75rem;font-weight:700;
+                   padding:2px 10px;border-radius:20px;letter-spacing:0.06em;">
+        RED
+      </span>
+      <span style="font-weight:600;font-size:0.93em;">Write the test — function does not exist yet</span>
     </div>
-    <div class="pill-card" style="background:#E6F1FB;border:1px solid #85B7EB;flex:1;">
-      <div class="pill-label" style="color:#0C447C;font-size:1.05rem;">Act</div>
-      <div style="font-size:0.8rem;color:#0C447C;margin-top:4px;">stimulate the SUT</div>
+    <p style="margin:0 0 10px;font-size:0.93em;">Choose any value from category 1
+    (not a multiple of 4). Write a test asserting <code>is_leap_year</code> returns
+    <code>False</code> for it. The function does not exist yet — so running pytest
+    will immediately fail with a <code>NameError</code>. That is expected and correct.</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      test_leap_year.py &mdash; first test only
     </div>
-    <div class="pill-card" style="background:#E1F5EE;border:1px solid #5DCAA5;flex:1;">
-      <div class="pill-label" style="color:#085041;font-size:1.05rem;">Assert</div>
-      <div style="font-size:0.8rem;color:#085041;margin-top:4px;">verify expected results</div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_not_multiple_of_4</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1973</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>  <span style="color:#6A9955;"># RED: is_leap_year doesn't exist yet</span></pre>
+    <div class="box box-warn" style="margin:10px 0 16px;">
+      <div class="box-title">&#10060; Test output at this point</div>
+      <p style="margin:0;font-family:'Courier New',monospace;font-size:0.88em;">
+        ERROR: NameError: name 'is_leap_year' is not defined
+      </p>
+    </div>
+
+    <!-- GREEN phase -->
+    <div style="display:flex;align-items:center;gap:8px;margin:0 0 8px;">
+      <span style="background:#2E7D32;color:#fff;font-size:0.75rem;font-weight:700;
+                   padding:2px 10px;border-radius:20px;letter-spacing:0.06em;">
+        GREEN
+      </span>
+      <span style="font-weight:600;font-size:0.93em;">Write the minimum code to make it pass</span>
+    </div>
+    <p style="margin:0 0 10px;font-size:0.93em;">Now create
+    <code>calendar_utils.py</code> and write just enough code to make
+    <em>this one test</em> pass — nothing more.</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      calendar_utils.py &mdash; bare minimum
+    </div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">year</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">4</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span>  <span style="color:#6A9955;"># just enough for category 1 — nothing more yet</span></pre>
+    <div class="box box-green" style="margin:10px 0 0;">
+      <div class="box-title">&#9989; Test output now</div>
+      <p style="margin:0;font-size:0.9em;">
+        <code>test_not_multiple_of_4</code> &nbsp;PASSED &nbsp;&#10004;
+        &nbsp;&nbsp;&mdash;&nbsp;&nbsp;
+        <code>is_leap_year(1973)</code> returns <code>False</code>
+        because 1973 % 4 &ne; 0.
+      </p>
+    </div>
+
+  </div>
+</div>
+<!-- ── STEP 2 ── -->
+<div style="border:1px solid var(--border);border-radius:10px;
+            overflow:hidden;margin:0 0 16px;">
+  <div style="background:#C62828;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#C62828;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;flex-shrink:0;">2</span>
+    <span style="color:#fff;font-weight:600;">
+      Category 2 &mdash; Add a test, watch it fail, fix the code (RED &rarr; GREEN)
+    </span>
+  </div>
+  <div style="padding:14px 18px;">
+    <p style="margin:0 0 10px;">Choose a value from category 2 (multiple of 4, not of
+    100). Add a second test. The current code already handles this correctly &mdash;
+    but add the test anyway to <strong>lock in</strong> this behavior.</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      test_leap_year.py &mdash; two tests now
+    </div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_not_multiple_of_4</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1973</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>  <span style="color:#6A9955;"># still passing ✓</span>
+
+<span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_4_not_100</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2008</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">True</span>   <span style="color:#6A9955;"># GREEN: 2008 % 4 == 0 already passes ✓</span></pre>
+    <div class="box box-green" style="margin:10px 0 0;">
+      <div class="box-title">&#9989; GREEN &mdash; both tests pass, no code change needed</div>
+      <p style="margin:0;font-size:0.9em;">The existing implementation already handles
+      category 2. Both tests pass. Move on.</p>
     </div>
   </div>
+</div>
 
-  <p>The <strong>assertion step</strong> makes each test <strong>Self-checking</strong>,
-  eliminating the need for a human programmer to inspect test results. Common assertions
-  are checks on <strong>values</strong> (equality, betweenness, and so on) and checks on
-  <strong>behavior</strong> (is an exception raised or not).</p>
+<!-- ── STEP 3 ── -->
+<div style="border:1px solid var(--border);border-radius:10px;
+            overflow:hidden;margin:0 0 16px;">
+  <div style="background:#C62828;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#C62828;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;flex-shrink:0;">3</span>
+    <span style="color:#fff;font-weight:600;">
+      Category 3 &mdash; A new test exposes a bug (RED &rarr; fix &rarr; GREEN)
+    </span>
+  </div>
+  <div style="padding:14px 18px;">
+    <p style="margin:0 0 10px;">Category 3: a year divisible by 100 but <em>not</em>
+    by 400 is <strong>not</strong> a leap year (e.g. 1900). Our current code returns
+    <code>True</code> for 1900 because 1900 % 4 == 0. The new test
+    <strong>catches this bug</strong>.</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      test_leap_year.py &mdash; three tests, one failing
+    </div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_100_not_400</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1900</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>  <span style="color:#6A9955;"># RED: current code wrongly returns True</span></pre>
+    <p style="margin:10px 0 10px;">Fix the implementation to handle the century-year
+    exception:</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      calendar_utils.py &mdash; updated (GREEN)
+    </div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">year</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">100</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#569CD6;">False</span>         <span style="color:#6A9955;"># century years are NOT leap years...</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">4</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span>  <span style="color:#6A9955;"># ...unless divisible by 4</span></pre>
+    <div class="box box-green" style="margin:10px 0 0;">
+      <div class="box-title">&#9989; GREEN &mdash; all three tests pass</div>
+      <p style="margin:0;font-size:0.9em;">1973 &rarr; False ✓ &nbsp;|&nbsp;
+      2008 &rarr; True ✓ &nbsp;|&nbsp; 1900 &rarr; False ✓</p>
+    </div>
+  </div>
+</div>
 
-  <p>Here is the leap-year example written as pytest tests, following
-  Arrange&ndash;Act&ndash;Assert (in this simple case Arrange is trivial, since there is no
-  setup needed beyond the input value itself):</p>
-
-  <div style="margin:16px 0 24px;">
+<!-- ── STEP 4 ── -->
+<div style="border:1px solid var(--border);border-radius:10px;
+            overflow:hidden;margin:0 0 20px;">
+  <div style="background:#C62828;padding:9px 16px;display:flex;
+              align-items:center;gap:10px;">
+    <span style="background:#fff;color:#C62828;font-weight:800;font-size:0.9rem;
+                 width:28px;height:28px;border-radius:50%;display:inline-flex;
+                 align-items:center;justify-content:center;flex-shrink:0;">4</span>
+    <span style="color:#fff;font-weight:600;">
+      Category 4 &mdash; Final test reveals another edge case (RED &rarr; GREEN)
+    </span>
+  </div>
+  <div style="padding:14px 18px;">
+    <p style="margin:0 0 10px;">Category 4: a year divisible by 400 <em>is</em> a leap
+    year (e.g. 2000). Our current code returns <code>False</code> for 2000 because 2000
+    % 100 == 0 and we return <code>False</code> for all century years. The new test
+    <strong>catches this second edge case</strong>.</p>
+    <div style="background:#374151;color:#fff;font-size:11px;font-weight:600;
+                letter-spacing:0.07em;text-transform:uppercase;padding:6px 14px;
+                border-radius:6px 6px 0 0;">
+      test_leap_year.py &mdash; four tests, one failing
+    </div>
+    <pre style="margin:0;border-radius:0 0 6px 6px;padding:14px 18px;
+                font-size:13.5px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_400</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2000</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">True</span>   <span style="color:#6A9955;"># RED: current code wrongly returns False</span></pre>
+    <p style="margin:10px 0 10px;">Fix the implementation one final time — now all four
+    categories are handled:</p>
     <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
                 letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
-                border-radius:8px 8px 0 0;">
-      &#128196; test_leap_year.py
+                border-radius:8px 8px 0 0;display:flex;justify-content:space-between;
+                align-items:center;">
+      <span>&#128196; calendar_utils.py &mdash; final implementation (GREEN)</span>
     </div>
-    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">calendar_utils</span> <span style="color:#569CD6;">import</span> <span style="color:#DCDCAA;">is_leap_year</span>
+    <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;
+                font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#9CDCFE;">year</span><span style="color:#D4D4D4;">):</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">400</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#569CD6;">True</span>          <span style="color:#6A9955;"># divisible by 400 → always a leap year</span>
+    <span style="color:#569CD6;">if</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">100</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span><span style="color:#D4D4D4;">:</span>
+        <span style="color:#569CD6;">return</span> <span style="color:#569CD6;">False</span>         <span style="color:#6A9955;"># divisible by 100 but not 400 → not a leap year</span>
+    <span style="color:#569CD6;">return</span> <span style="color:#9CDCFE;">year</span> <span style="color:#D4D4D4;">%</span> <span style="color:#B5CEA8;">4</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">0</span>  <span style="color:#6A9955;"># divisible by 4 → leap year</span></pre>
+    <div class="box box-green" style="margin:10px 0 0;">
+      <div class="box-title">&#9989; GREEN &mdash; all four tests pass</div>
+      <p style="margin:0;font-size:0.9em;">1973 &rarr; False ✓ &nbsp;|&nbsp;
+      2008 &rarr; True ✓ &nbsp;|&nbsp;
+      1900 &rarr; False ✓ &nbsp;|&nbsp;
+      2000 &rarr; True ✓</p>
+    </div>
+  </div>
+</div>
+
+<!-- Why not write it all at once -->
+<div class="box box-note" style="margin:0 0 28px;">
+  <div class="box-title">&#128161; "Why Not Just Write the Whole Method at Once?"</div>
+  <p style="margin:0;"><code>is_leap_year</code> is such a simple leaf method that you
+  might object that you could write the entire method at once along with all four test
+  cases, rather than going through Red&ndash;Green&ndash;Refactor four separate times.
+  For very simple leaf functions, this objection has merit &mdash; but notice what
+  happened above: <strong>each new test exposed a bug in the previous
+  implementation</strong>. The discipline of writing one test at a time scales to far
+  more complex code, where it is not at all obvious what "the whole method" should look
+  like in advance.</p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+
+<h2>2.4 The Three Phases of a Test Case</h2>
+
+<p>Looking back at the four tests we just wrote, they all share the same structure.
+In each test we <strong>set up</strong> an input value, <strong>call</strong> the
+function, and <strong>check</strong> the result. This three-part pattern has a name:
+<strong>Arrange &mdash; Act &mdash; Assert</strong>.</p>
+
+<div class="box box-note" style="margin:20px 0;">
+  <div class="box-title">&#128203; The Structure of Every Test Case</div>
+  <p style="margin:0 0 12px;">In general, every test case in a suite follows the same
+  three-part structure:</p>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--blue-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--blue-dark);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;padding:4px 12px;
+                  border-radius:20px;flex-shrink:0;margin-top:2px;">
+        1 &nbsp;ARRANGE
+      </div>
+      <p style="margin:0;font-size:0.93em;">Create any necessary
+      <strong>preconditions</strong> for the test case, such as setting values
+      of variables that affect the behavior of the SUT.</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--teal-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--teal);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;padding:4px 12px;
+                  border-radius:20px;flex-shrink:0;margin-top:2px;">
+        2 &nbsp;ACT
+      </div>
+      <p style="margin:0;font-size:0.93em;"><strong>Exercise the SUT</strong>
+      &mdash; call the method or trigger the behavior you are testing.</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:14px;
+                background:#fff;border:1px solid var(--green-light);
+                border-radius:8px;padding:12px 16px;">
+      <div style="background:var(--green-dark);color:#fff;font-weight:800;
+                  font-size:0.85rem;letter-spacing:0.06em;padding:4px 12px;
+                  border-radius:20px;flex-shrink:0;margin-top:2px;">
+        3 &nbsp;ASSERT
+      </div>
+      <p style="margin:0;font-size:0.93em;"><strong>Verify</strong> that the
+      result or behavior matches what was expected.</p>
+    </div>
+  </div>
+</div>
+
+<p>The assertion step makes each test <strong>Self-checking</strong>, eliminating
+the need for a human programmer to inspect test results. Now that we have built up
+all four tests one at a time, here they are together — each one annotated to show
+which phase is which:</p>
+
+<div style="margin:16px 0 24px;">
+  <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
+              letter-spacing:0.07em;text-transform:uppercase;padding:8px 16px;
+              border-radius:8px 8px 0 0;display:flex;justify-content:space-between;
+              align-items:center;">
+    <span>&#128196; test_leap_year.py &mdash; complete test suite</span>
+  </div>
+  <pre style="margin:0;border-radius:0 0 8px 8px;padding:20px 24px;
+              font-size:14px;line-height:1.9;background:#1E1E1E;"><span style="color:#569CD6;">from</span> <span style="color:#9CDCFE;">calendar_utils</span> <span style="color:#569CD6;">import</span> <span style="color:#DCDCAA;">is_leap_year</span>
 
 <span style="color:#6A9955;"># Category 1: not a multiple of 4</span>
 <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_not_multiple_of_4</span><span style="color:#D4D4D4;">():</span>
+    <span style="color:#6A9955;"># Arrange: year = 1973 (the input value is the only setup needed)</span>
+    <span style="color:#6A9955;"># Act + Assert combined — trivial arrange means both fit on one line</span>
     <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">1973</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">False</span>
 
 <span style="color:#6A9955;"># Category 2: multiple of 4, not of 100</span>
@@ -854,85 +1121,67 @@
 <span style="color:#6A9955;"># Category 4: multiple of 400</span>
 <span style="color:#569CD6;">def</span> <span style="color:#DCDCAA;">test_multiple_of_400</span><span style="color:#D4D4D4;">():</span>
     <span style="color:#569CD6;">assert</span> <span style="color:#DCDCAA;">is_leap_year</span><span style="color:#D4D4D4;">(</span><span style="color:#B5CEA8;">2000</span><span style="color:#D4D4D4;">)</span> <span style="color:#569CD6;">is</span> <span style="color:#569CD6;">True</span></pre>
-  </div>
+</div>
 
-  <p>A few common assertion patterns in pytest:</p>
+<p>In this simple case the <strong>Arrange</strong> phase is trivial — there is no
+setup needed beyond the input value itself, so Arrange, Act, and Assert collapse onto
+a single line. In more complex tests (covered in Section 3) the three phases are
+clearly separated. Common assertion patterns in pytest:</p>
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width:30%;">On a value</th>
-        <th>Example (pytest)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Value equality</td>
-        <td><code>assert x == "Python"</code> &nbsp;/&nbsp; <code>assert x != "Python"</code></td>
-      </tr>
-      <tr>
-        <td>Boolean (truthy)</td>
-        <td><code>assert x</code> &nbsp;<span style="color:var(--text-muted);">(non-False/non-None)</span></td>
-      </tr>
-      <tr>
-        <td>Regular expression</td>
-        <td><code>assert re.match(r"YourRegexHere", s)</code></td>
-      </tr>
-      <tr>
-        <td>Object type</td>
-        <td><code>assert isinstance(a, list)</code></td>
-      </tr>
-    </tbody>
-  </table>
+<table>
+  <thead>
+    <tr>
+      <th style="width:30%;">On a value</th>
+      <th>Example (pytest)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Value equality</td>
+      <td><code>assert x == "Python"</code> &nbsp;/&nbsp;
+      <code>assert x != "Python"</code></td>
+    </tr>
+    <tr>
+      <td>Boolean (truthy)</td>
+      <td><code>assert x</code>
+      <span style="color:var(--text-muted);font-size:0.9em;">(non-False / non-None)</span>
+      </td>
+    </tr>
+    <tr>
+      <td>Regular expression</td>
+      <td><code>assert re.match(r"YourRegexHere", s)</code></td>
+    </tr>
+    <tr>
+      <td>Object type</td>
+      <td><code>assert isinstance(a, list)</code></td>
+    </tr>
+  </tbody>
+</table>
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width:30%;">On a block / call</th>
-        <th>Example (pytest)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Exception</td>
-        <td><code>with pytest.raises(ValueError): math.sqrt(-1)</code></td>
-      </tr>
-      <tr>
-        <td>Side effect</td>
-        <td><code>before = len(reviews); delete_first_review(); assert len(reviews) == before - 1</code></td>
-      </tr>
-    </tbody>
-  </table>
+<table>
+  <thead>
+    <tr>
+      <th style="width:30%;">On a block / call</th>
+      <th>Example (pytest)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Exception raised</td>
+      <td><code>with pytest.raises(ValueError): math.sqrt(-1)</code></td>
+    </tr>
+    <tr>
+      <td>Side effect</td>
+      <td><code>before = len(reviews); delete_first_review();
+      assert len(reviews) == before - 1</code></td>
+    </tr>
+  </tbody>
+</table>
 
-  <p style="font-size:0.9em;color:var(--text-muted);">One can invert the sense of any
-  assertion (<code>assert x != 50</code>), but as Module 2 warned, negative assertions
-  should be used with caution, since there are many ways for a program not to satisfy a
-  particular condition while still not behaving correctly.</p>
-
-  <div class="box box-green">
-    <div class="box-title">&#128221; Section Summary</div>
-    <ul style="margin:0 0 0 20px;">
-      <li>The <strong>system under test (SUT)</strong>, which may be as small as a single
-      method or as large as the whole app, is the subject of a particular test case. A
-      <strong>test suite</strong> is a full set of tests, usually including unit,
-      integration, and perhaps other types.</li>
-      <li>The finest-grained tests are <strong>unit tests</strong>, which test the code in
-      a single method. The simplest unit tests are those for <strong>pure leaf
-      functions</strong>: deterministic, no side effects, no collaborators or helper
-      methods called. It is worth structuring your code to expose as much functionality
-      as possible in pure leaf functions.</li>
-      <li>One way to select input values for unit tests is to test <strong>critical
-      points</strong> (values that may influence the code path in the SUT) and values
-      from each <strong>noncritical set</strong> (a set within which the choice of any
-      particular value does not affect control flow).</li>
-      <li>Each unit test checks just one behavior &mdash; each category of input values
-      gets its own test case.</li>
-      <li>Each test case follows the same structure: <strong>arrange</strong> (set up
-      preconditions), <strong>act</strong> (stimulate the SUT), <strong>assert</strong>
-      (verify the expected results). The assertion step makes each test
-      <strong>Self-checking</strong>.</li>
-    </ul>
-  </div>
+<p style="font-size:0.9em;color:var(--text-muted);">One can invert the sense of any
+assertion (<code>assert x != 50</code>), but as Module 2 warned, negative assertions
+should be used with caution — there are many ways for a program not to satisfy a
+particular condition while still not behaving correctly.</p>
 
   <hr class="divider" />
 

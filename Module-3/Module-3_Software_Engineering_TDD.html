@@ -1189,7 +1189,7 @@ particular condition while still not behaving correctly.</p>
   <!-- ═══════════════════════════════════════════════════════
        SECTION 3 — DOUBLES AND SEAMS
        ═══════════════════════════════════════════════════════ -->
-  <h1 id="s3">3. Isolating Code: Doubles and Seams</h1>
+    <h1 id="s3">3. Isolating Code: Doubles and Seams</h1>
 
   <p>We can distinguish three characteristics &mdash; which may occur individually or
   together &mdash; that complicate unit testing:</p>
@@ -1200,6 +1200,33 @@ particular condition while still not behaving correctly.</p>
     <li>The SUT has <strong>nondeterministic or time-dependent behavior</strong></li>
     <li>The SUT <strong>has side effects</strong></li>
   </ol>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; In Plain English &mdash; Before We Dive In</div>
+    <p style="margin:0 0 8px;">All three reasons boil down to the same root problem:
+    <strong>the SUT (System Under Test &mdash; the function or method you're
+    testing) depends on something you don't fully control.</strong> A quick
+    everyday translation of each:</p>
+    <ul style="margin:0 0 0 20px;">
+      <li><strong>Reason 1 &mdash; Collaborators:</strong> your function asks
+      <em>another</em> function, object, class, or service to do part of the work
+      for it &mdash; the same way you might ask a friend to look something up for
+      you instead of knowing the answer yourself. If your friend's answer
+      changes, so does yours.</li>
+      <li><strong>Reason 2 &mdash; Nondeterminism / time:</strong> the same input
+      doesn't always produce the same output &mdash; think of asking
+      "what's the weather?" or checking "what time is it?" The answer today isn't
+      the answer tomorrow.</li>
+      <li><strong>Reason 3 &mdash; Side effects:</strong> the function reaches
+      "outside itself" and changes the world &mdash; writing to a database,
+      sending an email, printing to the screen &mdash; rather than simply
+      returning a value.</li>
+    </ul>
+    <p style="margin:8px 0 0;">The rest of Section 3 works through <strong>one
+    running example</strong> that has reason&nbsp;1 (a collaborator) and
+    reason&nbsp;2 (an unreliable network call baked into that collaborator), and
+    shows exactly how we tame it for testing.</p>
+  </div>
 
   <h2>3.1 A Motivating Example: Looking Up a Movie</h2>
 
@@ -1220,6 +1247,26 @@ particular condition while still not behaving correctly.</p>
     In that case, we assume <code>find_in_tmdb</code> will raise an exception
     <code>ConnectionError</code>.</li>
   </ul>
+
+  <div class="box box-note">
+    <div class="box-title">&#128260; Who's the SUT, and Who's the Collaborator?</div>
+    <p style="margin:0 0 6px;">Picture asking a friend for directions instead of
+    knowing the route yourself:</p>
+    <p style="margin:0 0 6px;text-align:center;font-weight:600;">
+      You <span style="color:var(--blue-med);">&rarr;</span> ask your friend for directions
+      <span style="color:var(--blue-med);">&rarr;</span> friend answers
+      <span style="color:var(--blue-med);">&rarr;</span> you follow the answer
+    </p>
+    <p style="margin:0;">Here, <strong>you</strong> are the <strong>SUT</strong>
+    (<code>review_movie()</code>), and your <strong>friend</strong> is the
+    <strong>collaborator</strong> (<code>Movie.find_in_tmdb()</code>, which in turn
+    talks to the real TMDb website over the Internet). The problem is exactly the
+    same as with a real friend: <strong>you don't control what they say back.</strong>
+    Today your friend might say "one match," tomorrow "no matches," and the day the
+    Internet is down, they might not answer at all. That's precisely why
+    <code>review_movie()</code> is hard to test as written &mdash; its behavior is
+    only as predictable as <code>find_in_tmdb()</code>'s answer.</p>
+  </div>
 
   <div style="margin:16px 0 24px;">
     <div style="background:var(--blue-dark);color:#fff;font-size:11.5px;font-weight:600;
@@ -1242,6 +1289,59 @@ particular condition while still not behaving correctly.</p>
         <span style="color:#569CD6;">return</span> <span style="color:#DCDCAA;">redirect</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"review_movie"</span><span style="color:#D4D4D4;">,</span> <span style="color:#9CDCFE;">alert</span><span style="color:#D4D4D4;">=</span><span style="color:#CE9178;">f"Error contacting TMDb: {err}"</span><span style="color:#D4D4D4;">)</span></pre>
   </div>
 
+  <p style="margin:0 0 4px;"><strong>Walking through it in plain terms:</strong>
+  a user types a search string, <code>review_movie()</code> hands that string to
+  its collaborator <code>Movie.find_in_tmdb()</code>, and depending on what comes
+  back, the view takes one of <strong>four different paths</strong>:</p>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#0C447C;">
+      <span class="step-num" style="color:#0C447C;">1</span>
+      <span class="step-title">Zero matches &mdash; find_in_tmdb() returns []</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;"><code>not matches</code> is <code>True</code> (an empty
+      list is "falsy"), so the view <strong>redirects</strong> back to the search
+      page with the message <em>"No matches."</em></p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#2E7D32;">
+      <span class="step-num" style="color:#2E7D32;">2</span>
+      <span class="step-title">Exactly one match &mdash; find_in_tmdb() returns a list of length 1</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">The <code>elif len(matches) == 1</code> branch runs,
+      <code>movie = matches[0]</code> grabs that single movie, and the view
+      <strong>renders the review page</strong> so the user can write a review.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#412402;">
+      <span class="step-num" style="color:#412402;">3</span>
+      <span class="step-title">Several matches &mdash; find_in_tmdb() returns a list of length &gt; 1</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Neither of the above conditions is true, so the
+      <code>else</code> branch runs and the view <strong>renders a selection
+      page</strong> asking "Which movie did you mean?"</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-header" style="background:#C62828;">
+      <span class="step-num" style="color:#C62828;">4</span>
+      <span class="step-title">Network failure &mdash; find_in_tmdb() raises ConnectionError</span>
+    </div>
+    <div class="step-body">
+      <p style="margin:0;">Control jumps straight to the <code>except</code>
+      block, and the view <strong>redirects</strong> back to the search page with
+      an error message instead of a list of matches.</p>
+    </div>
+  </div>
+
   <p>How would we unit-test this view? The <strong>Arrange</strong> step consists of
   preparing a request with some search string. The <strong>Act</strong> step consists of
   calling the view with that search string. But the <strong>Assert</strong> step depends
@@ -1251,6 +1351,16 @@ particular condition while still not behaving correctly.</p>
   here, and to test each of them, we essentially need to be able to <strong>control the
   behavior of the call to <code>find_in_tmdb</code></strong>.</p>
 
+  <div class="box box-green">
+    <div class="box-title">&#9989; The One Idea to Take Away From 3.1</div>
+    <p style="margin:0;">We can't test all four branches reliably as long as
+    <code>find_in_tmdb()</code> is free to talk to the real Internet. So the next
+    question is: <strong>how do we take over &mdash; "force" &mdash; what
+    <code>find_in_tmdb()</code> returns, on a test-by-test basis, without touching
+    the source code of <code>review_movie()</code> itself?</strong> That's exactly
+    what a <em>seam</em> lets us do, covered next.</p>
+  </div>
+
   <h2>3.2 Seams</h2>
 
   <div class="box box-note">
@@ -1259,6 +1369,28 @@ particular condition while still not behaving correctly.</p>
     <em>"a place where you can alter behavior in your program without editing in that
     place."</em> In our case, we want to alter (control) the behavior of
     <code>find_in_tmdb</code> without changing the source code of the view function.</p>
+  </div>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; In Plain English &mdash; A Seam is Like Swapping a Lightbulb</div>
+    <p style="margin:0 0 8px;">Imagine a light switch wired to a bulb:</p>
+    <p style="margin:0 0 4px;text-align:center;font-weight:600;">
+      Switch <span style="color:var(--blue-med);">&rarr;</span> Real Bulb &nbsp;
+      <em style="color:var(--text-muted);font-weight:400;">(normal operation)</em>
+    </p>
+    <p style="margin:0 0 8px;text-align:center;font-weight:600;">
+      Switch <span style="color:var(--blue-med);">&rarr;</span> Fake Bulb &nbsp;
+      <em style="color:var(--text-muted);font-weight:400;">(during testing)</em>
+    </p>
+    <p style="margin:0;">The <strong>switch never changes</strong> &mdash; it
+    flips the same way either time. Only the thing plugged in at the other end
+    changes. That socket &mdash; the point where one thing can be swapped for
+    another &mdash; is the <strong>seam</strong>. In our code, the line
+    <code>Movie.find_in_tmdb(...)</code> is the socket: normally it's wired to
+    the real TMDb-calling function, and during a test we temporarily wire it to a
+    fake one instead. <code>review_movie()</code> keeps calling
+    <code>Movie.find_in_tmdb(...)</code> exactly the same way either time
+    &mdash; <strong>it never knows the difference.</strong></p>
   </div>
 
   <p>The strategy is to <strong>temporarily replace</strong> <code>find_in_tmdb</code> so
@@ -1283,6 +1415,45 @@ particular condition while still not behaving correctly.</p>
     <span style="color:#6A9955;"># Assert</span>
     <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">response</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">status_code</span> <span style="color:#D4D4D4;">==</span> <span style="color:#B5CEA8;">302</span>
     <span style="color:#569CD6;">assert</span> <span style="color:#9CDCFE;">response</span><span style="color:#D4D4D4;">.</span><span style="color:#9CDCFE;">url</span> <span style="color:#D4D4D4;">==</span> <span style="color:#DCDCAA;">reverse</span><span style="color:#D4D4D4;">(</span><span style="color:#CE9178;">"review_movie"</span><span style="color:#D4D4D4;">)</span></pre>
+  </div>
+
+  <div class="box box-note">
+    <div class="box-title">&#128269; Breaking Down That <code>monkeypatch.setattr(...)</code> Line</div>
+    <p style="margin:0 0 10px;">It looks dense, but it's really just three pieces
+    of information, in order:</p>
+    <table style="margin:0 0 10px;">
+      <thead>
+        <tr>
+          <th style="width:22%;">Piece</th>
+          <th style="width:28%;">What it is</th>
+          <th>Meaning here</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Movie</code></td>
+          <td>The class to patch</td>
+          <td>"Replace something that lives inside the <code>Movie</code> class."</td>
+        </tr>
+        <tr>
+          <td><code>"find_in_tmdb"</code></td>
+          <td>The attribute/method name</td>
+          <td>"Specifically, replace the method called <code>find_in_tmdb</code>."</td>
+        </tr>
+        <tr>
+          <td><code>lambda q: []</code></td>
+          <td>The replacement function (the stub)</td>
+          <td>"Whenever it's called with some argument <code>q</code>, just
+          return <code>[]</code> &mdash; no matter what <code>q</code> is, and
+          without ever touching the network."</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin:0;"><code>lambda q: []</code> is nothing more than a short,
+    inline way of writing <code>def fake(q): return []</code>. After this one
+    line runs, every call to <code>Movie.find_in_tmdb(...)</code> anywhere inside
+    <code>review_movie()</code> silently becomes a call to this fake function
+    instead &mdash; <strong>no Internet connection is ever made.</strong></p>
   </div>
 
   <p>The <strong>Arrange</strong> part of this test now includes setting up a stub for
@@ -1318,6 +1489,31 @@ particular condition while still not behaving correctly.</p>
       <li><strong>Test double</strong> &mdash; the generic term covering all of the above
       and a few other types of seams.</li>
     </ul>
+  </div>
+
+  <div class="box box-note">
+    <div class="box-title">&#128161; In Plain English &mdash; Same Idea, Everyday Words</div>
+    <ul style="margin:0 0 8px 20px;">
+      <li><strong>Stub</strong> &mdash; a fake that just says <em>"if you call me,
+      here's what I'll say back."</em> It doesn't care whether it actually gets
+      called. Like leaving an answering machine message ready to play &mdash; it
+      plays if someone calls, and nobody complains if nobody does.</li>
+      <li><strong>Mock</strong> &mdash; a stub with a memory. It also says
+      <em>"and by the way, I'm keeping a receipt of every time I was called, and
+      with what."</em> You can later check that receipt: <em>"Was I called?
+      Exactly once? With <code>'Titanic'</code>?"</em></li>
+      <li><strong>Spy</strong> &mdash; lets the <em>real</em> method run as normal,
+      but quietly stands next to it taking notes on the arguments and return
+      value, so you can inspect them afterward without changing the real
+      behavior at all.</li>
+      <li><strong>Test double</strong> &mdash; the umbrella term for
+      "any fake stand-in used during testing," the way "stunt double" covers
+      any performer who stands in for the real actor.</li>
+    </ul>
+    <p style="margin:0;">A useful rule of thumb: <strong>use a stub when you only
+    care about the return value</strong> the SUT receives; <strong>use a mock
+    when it also matters whether/how the collaborator was actually
+    called.</strong></p>
   </div>
 
   <p>The term <strong>test double</strong> generically covers stubs, mocks, and spies.
@@ -1580,6 +1776,8 @@ particular condition while still not behaving correctly.</p>
   </div>
 
   <hr class="divider" />
+
+
 
 
   <!-- ═══════════════════════════════════════════════════════
